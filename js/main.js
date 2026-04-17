@@ -34,11 +34,13 @@
     return {
       screen: "intro",
       eventIndex: 0,
+      activeEventIndex: null,
       sceneIntroIndex: 0,
       scores: { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 },
       lastPick: { EI: null, SN: null, TF: null, JP: null },
       choices: [],
       hiddenChoices: [],
+      completedEvents: {},
       triggeredSecrets: {},
       selectedChoice: null,
       feedback: null,
@@ -104,7 +106,10 @@
   }
 
   function currentEvent() {
-    return DATA.events[app.eventIndex] || null;
+    if (app.activeEventIndex == null) {
+      return null;
+    }
+    return DATA.events[app.activeEventIndex] || null;
   }
 
   function sceneById(sceneId) {
@@ -117,11 +122,7 @@
   }
 
   function currentScene() {
-    var event = currentEvent();
-    if (event) {
-      return sceneById(event.sceneId);
-    }
-    return DATA.scenes[DATA.scenes.length - 1];
+    return DATA.scenes[app.sceneIntroIndex] || DATA.scenes[DATA.scenes.length - 1];
   }
 
   function sceneIndexForEvent(event) {
@@ -133,8 +134,56 @@
     return 0;
   }
 
-  function secretForCurrentEvent() {
-    var event = currentEvent();
+  function eventIndexById(eventId) {
+    for (var i = 0; i < DATA.events.length; i += 1) {
+      if (DATA.events[i].id === eventId) {
+        return i;
+      }
+    }
+    return null;
+  }
+
+  function eventsForSceneIndex(sceneIndex) {
+    var scene = DATA.scenes[sceneIndex];
+    if (!scene) {
+      return [];
+    }
+    var events = [];
+    for (var i = 0; i < DATA.events.length; i += 1) {
+      if (DATA.events[i].sceneId === scene.id) {
+        events.push(DATA.events[i]);
+      }
+    }
+    return events;
+  }
+
+  function countCompletedEvents() {
+    var total = 0;
+    for (var i = 0; i < DATA.events.length; i += 1) {
+      if (app.completedEvents[DATA.events[i].id]) {
+        total += 1;
+      }
+    }
+    return total;
+  }
+
+  function countCompletedInScene(sceneIndex) {
+    var events = eventsForSceneIndex(sceneIndex);
+    var total = 0;
+    for (var i = 0; i < events.length; i += 1) {
+      if (app.completedEvents[events[i].id]) {
+        total += 1;
+      }
+    }
+    return total;
+  }
+
+  function isSceneComplete(sceneIndex) {
+    var events = eventsForSceneIndex(sceneIndex);
+    return events.length > 0 && countCompletedInScene(sceneIndex) >= events.length;
+  }
+
+  function secretForEvent(event) {
     if (!event) {
       return null;
     }
@@ -147,9 +196,14 @@
     return null;
   }
 
+  function secretForCurrentEvent() {
+    return secretForEvent(currentEvent());
+  }
+
   function startGame() {
     app.screen = "sceneIntro";
     app.eventIndex = 0;
+    app.activeEventIndex = null;
     app.sceneIntroIndex = 0;
     app.feedback = null;
     app.secret = null;
@@ -180,14 +234,20 @@
   }
 
   function chooseOption(choice) {
+    var event = currentEvent();
+    if (!event || app.completedEvents[event.id]) {
+      return;
+    }
     applyScore(choice.score);
     app.selectedChoice = choice;
     app.choices.push({
-      eventId: currentEvent().id,
-      eventTitle: currentEvent().title,
+      eventId: event.id,
+      eventTitle: event.title,
       choiceText: choice.text,
       score: choice.score
     });
+    app.completedEvents[event.id] = true;
+    app.eventIndex = countCompletedEvents();
     app.feedback = {
       title: "选择之后",
       text: choice.feedback,
@@ -229,22 +289,23 @@
   function advanceAfterFeedback() {
     if (app.feedback && app.feedback.hidden) {
       app.feedback = null;
+      app.activeEventIndex = null;
       app.screen = "explore";
       return;
     }
 
-    app.eventIndex += 1;
     app.feedback = null;
     app.selectedChoice = null;
+    app.activeEventIndex = null;
 
-    if (app.eventIndex >= DATA.events.length) {
+    if (countCompletedEvents() >= DATA.config.normalEventTotal) {
       app.screen = "result";
       audio.transition();
       return;
     }
 
-    if (app.eventIndex % 4 === 0) {
-      app.sceneIntroIndex = sceneIndexForEvent(currentEvent());
+    if (isSceneComplete(app.sceneIntroIndex)) {
+      app.sceneIntroIndex += 1;
       app.screen = "sceneIntro";
       audio.transition();
       return;
@@ -485,12 +546,11 @@
     ctx.textBaseline = "middle";
     ctx.fillText(scene.title + " · " + scene.name, 32, 35);
 
-    var normalDone = Math.min(app.eventIndex + (app.screen === "result" ? 0 : 1), DATA.config.normalEventTotal);
-    if (app.screen === "result") {
-      normalDone = DATA.config.normalEventTotal;
-    }
-    var progress = "事件 " + normalDone + "/" + DATA.config.normalEventTotal + " · 隐藏 " + app.hiddenChoices.length + "/" + DATA.config.hiddenEventTotal;
-    fillRoundRect(20, 60, 154, 28, 8, "rgba(255,255,255,0.62)");
+    var normalDone = app.screen === "result" ? DATA.config.normalEventTotal : countCompletedEvents();
+    var sceneDone = countCompletedInScene(app.sceneIntroIndex);
+    var sceneTotal = eventsForSceneIndex(app.sceneIntroIndex).length || 4;
+    var progress = "总 " + normalDone + "/" + DATA.config.normalEventTotal + " · 本幕 " + sceneDone + "/" + sceneTotal + " · 隐藏 " + app.hiddenChoices.length + "/" + DATA.config.hiddenEventTotal;
+    fillRoundRect(20, 60, 210, 28, 8, "rgba(255,255,255,0.62)");
     ctx.font = "12px sans-serif";
     ctx.fillStyle = "#4d6d69";
     ctx.fillText(progress, 32, 74);
@@ -635,8 +695,18 @@
     }
   }
 
-  function addCurrentHotspot(event) {
-    var secret = secretForCurrentEvent();
+  function drawCompletedMark(event) {
+    var hotspot = event.hotspot;
+    fillRoundRect(hotspot.x + hotspot.w - 36, hotspot.y - 8, 56, 26, 8, "rgba(47,139,134,0.88)");
+    ctx.font = "600 12px sans-serif";
+    ctx.fillStyle = "#ffffff";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("已完成", hotspot.x + hotspot.w - 8, hotspot.y + 5);
+  }
+
+  function addSceneHotspot(event) {
+    var secret = secretForEvent(event);
     var hotspot = event.hotspot;
     app.hotspots.push({
       id: hotspot.id,
@@ -646,9 +716,11 @@
       w: hotspot.w + 36,
       h: hotspot.h + 52,
       onTap: function () {
+        app.activeEventIndex = eventIndexById(event.id);
         app.screen = "dialogue";
       },
       onLong: secret ? function () {
+        app.activeEventIndex = eventIndexById(event.id);
         triggerSecret(secret);
       } : null
     });
@@ -727,29 +799,47 @@
   }
 
   function drawExplore() {
-    var event = currentEvent();
     var scene = currentScene();
+    var events = eventsForSceneIndex(app.sceneIntroIndex);
+    var remaining = events.length - countCompletedInScene(app.sceneIntroIndex);
+    var hasSecretHint = false;
     drawSceneBackground(scene);
     drawTopHud(scene);
     drawAudioButton();
-    drawHotspot(event, true);
-    addCurrentHotspot(event);
 
-    var hasSecretHint = event.hint && secretForCurrentEvent();
-    fillRoundRect(28, 586, 334, hasSecretHint ? 150 : 122, 8, "rgba(255,255,255,0.88)");
+    for (var i = 0; i < events.length; i += 1) {
+      var event = events[i];
+      var done = !!app.completedEvents[event.id];
+      var eventSecret = secretForEvent(event);
+      if (!done && event.hint && eventSecret) {
+        hasSecretHint = true;
+      }
+      drawHotspot(event, !done);
+      if (done) {
+        drawCompletedMark(event);
+      } else {
+        addSceneHotspot(event);
+      }
+    }
+
+    fillRoundRect(28, 586, 334, hasSecretHint ? 158 : 132, 8, "rgba(255,255,255,0.88)");
     ctx.font = "700 18px sans-serif";
     ctx.fillStyle = "#245b56";
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
-    ctx.fillText(event.title, 48, 610);
-    drawWrapped("点击高亮处，看看这件事会把你带向哪里。", 48, 648, 292, 22, "15px sans-serif", "#496966", 2);
+    ctx.fillText(scene.name, 48, 610);
+    drawWrapped("本幕有 " + remaining + " 个未完成物件。你可以按自己的顺序点击，先点哪个，就先进入哪个事件。", 48, 648, 292, 22, "15px sans-serif", "#496966", 3);
     if (hasSecretHint) {
-      drawWrapped(event.hint, 48, 698, 292, 22, "14px sans-serif", "#d26262", 2);
+      drawWrapped("提示：有些物件长按 650ms 会出现隐藏反应。", 48, 724, 292, 22, "14px sans-serif", "#d26262", 2);
     }
   }
 
   function drawDialogue() {
     var event = currentEvent();
+    if (!event) {
+      app.screen = "explore";
+      return;
+    }
     drawSceneBackground(currentScene());
     drawTopHud(currentScene());
     drawAudioButton();
@@ -759,6 +849,10 @@
 
   function drawFeedback() {
     var event = currentEvent();
+    if (!event && !(app.feedback && app.feedback.hidden)) {
+      app.screen = "explore";
+      return;
+    }
     drawSceneBackground(currentScene());
     drawTopHud(currentScene());
     drawAudioButton();
@@ -785,6 +879,10 @@
   function drawSecret() {
     var event = currentEvent();
     var secret = app.secret;
+    if (!event || !secret) {
+      app.screen = "explore";
+      return;
+    }
     drawSceneBackground(currentScene());
     drawTopHud(currentScene());
     drawHotspot(event, false);
