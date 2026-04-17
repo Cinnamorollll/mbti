@@ -30,6 +30,10 @@
     P: "JP"
   };
 
+  var RAIN_RECT = { x: 60, y: 54, w: 150, h: 170 };
+  var WIND_RECT = { x: 270, y: 294, w: 112, h: 170 };
+  var STEAM_RECT = { x: 54, y: 214, w: 150, h: 156 };
+
   function createAppState() {
     return {
       screen: "intro",
@@ -46,6 +50,14 @@
       feedback: null,
       secret: null,
       assets: {},
+      sceneDrawRect: null,
+      rainDrops: [],
+      rainStreaks: [],
+      rainSparkles: [],
+      windGusts: [],
+      windMotes: [],
+      steamWisps: [],
+      steamPuffs: [],
       buttons: [],
       hotspots: [],
       pointer: null,
@@ -103,6 +115,102 @@
       };
       img.src = DATA.assets[key];
     });
+  }
+
+  function seededRandom(seed) {
+    var value = Math.sin(seed * 12.9898) * 43758.5453;
+    return value - Math.floor(value);
+  }
+
+  function initRainEffect() {
+    app.rainDrops = [];
+    app.rainStreaks = [];
+    app.rainSparkles = [];
+    app.windGusts = [];
+    app.windMotes = [];
+    app.steamWisps = [];
+    app.steamPuffs = [];
+
+    for (var i = 0; i < 34; i += 1) {
+      app.rainDrops.push({
+        x: seededRandom(i + 1) * RAIN_RECT.w,
+        baseY: seededRandom(i + 41) * (RAIN_RECT.h + 48),
+        length: 12 + seededRandom(i + 81) * 22,
+        speed: 42 + seededRandom(i + 121) * 72,
+        drift: 0.8 + seededRandom(i + 161) * 1.4,
+        phase: seededRandom(i + 201) * Math.PI * 2,
+        alpha: 0.30 + seededRandom(i + 241) * 0.22,
+        slant: 1.4 + seededRandom(i + 281) * 3.2
+      });
+    }
+
+    for (var j = 0; j < 10; j += 1) {
+      app.rainStreaks.push({
+        x: seededRandom(j + 321) * RAIN_RECT.w,
+        baseY: seededRandom(j + 361) * (RAIN_RECT.h + 70),
+        length: 20 + seededRandom(j + 401) * 46,
+        speed: 14 + seededRandom(j + 441) * 22,
+        alpha: 0.13 + seededRandom(j + 481) * 0.12,
+        phase: seededRandom(j + 521) * Math.PI * 2
+      });
+    }
+
+    for (var k = 0; k < 8; k += 1) {
+      app.rainSparkles.push({
+        x: seededRandom(k + 561) * RAIN_RECT.w,
+        y: seededRandom(k + 601) * RAIN_RECT.h,
+        radius: 1 + seededRandom(k + 641) * 1.7,
+        alpha: 0.08 + seededRandom(k + 681) * 0.14,
+        freq: 1.2 + seededRandom(k + 721) * 2.2,
+        phase: seededRandom(k + 761) * Math.PI * 2
+      });
+    }
+
+    for (var m = 0; m < 13; m += 1) {
+      app.windGusts.push({
+        baseX: seededRandom(m + 801) * (WIND_RECT.w + 80),
+        y: seededRandom(m + 841) * WIND_RECT.h,
+        width: 32 + seededRandom(m + 881) * 52,
+        speed: 20 + seededRandom(m + 921) * 46,
+        amp: 3 + seededRandom(m + 961) * 8,
+        alpha: 0.16 + seededRandom(m + 1001) * 0.22,
+        phase: seededRandom(m + 1041) * Math.PI * 2
+      });
+    }
+
+    for (var n = 0; n < 8; n += 1) {
+      app.windMotes.push({
+        baseX: seededRandom(n + 1081) * (WIND_RECT.w + 70),
+        y: seededRandom(n + 1121) * WIND_RECT.h,
+        speed: 18 + seededRandom(n + 1161) * 34,
+        radius: 1 + seededRandom(n + 1201) * 1.4,
+        alpha: 0.12 + seededRandom(n + 1241) * 0.18,
+        phase: seededRandom(n + 1281) * Math.PI * 2
+      });
+    }
+
+    for (var p = 0; p < 9; p += 1) {
+      app.steamWisps.push({
+        x: seededRandom(p + 1321) * STEAM_RECT.w,
+        baseY: seededRandom(p + 1361) * (STEAM_RECT.h + 60),
+        height: 42 + seededRandom(p + 1401) * 48,
+        speed: 12 + seededRandom(p + 1441) * 18,
+        sway: 7 + seededRandom(p + 1481) * 14,
+        alpha: 0.12 + seededRandom(p + 1521) * 0.18,
+        phase: seededRandom(p + 1561) * Math.PI * 2
+      });
+    }
+
+    for (var q = 0; q < 7; q += 1) {
+      app.steamPuffs.push({
+        x: seededRandom(q + 1601) * STEAM_RECT.w,
+        baseY: seededRandom(q + 1641) * (STEAM_RECT.h + 42),
+        speed: 8 + seededRandom(q + 1681) * 16,
+        radius: 7 + seededRandom(q + 1721) * 12,
+        alpha: 0.06 + seededRandom(q + 1761) * 0.10,
+        phase: seededRandom(q + 1801) * Math.PI * 2
+      });
+    }
   }
 
   function currentEvent() {
@@ -214,6 +322,7 @@
     var oldAssets = app.assets;
     app = createAppState();
     app.assets = oldAssets;
+    initRainEffect();
     audio.confirm();
   }
 
@@ -469,8 +578,127 @@
     }
     ctx.save();
     ctx.globalAlpha = alpha == null ? 1 : alpha;
+    ctx.imageSmoothingEnabled = false;
     ctx.drawImage(asset.image, x, y, w, h);
     ctx.restore();
+    return true;
+  }
+
+  function hexToRgb(hex) {
+    var value = String(hex || "#4f9f8f").replace("#", "");
+    if (value.length === 3) {
+      value = value.split("").map(function (ch) { return ch + ch; }).join("");
+    }
+    var num = parseInt(value, 16);
+    if (Number.isNaN(num)) {
+      return { r: 79, g: 159, b: 143 };
+    }
+    return {
+      r: (num >> 16) & 255,
+      g: (num >> 8) & 255,
+      b: num & 255
+    };
+  }
+
+  function sceneFill(color) {
+    var rgb = hexToRgb(color);
+    var gradient = ctx.createLinearGradient(0, 0, 0, H);
+    gradient.addColorStop(0, "rgba(" + rgb.r + "," + rgb.g + "," + rgb.b + ",0.28)");
+    gradient.addColorStop(0.54, "rgba(255,255,255,0.38)");
+    gradient.addColorStop(1, "rgba(" + rgb.r + "," + rgb.g + "," + rgb.b + ",0.22)");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  function drawCoverImage(img, alpha, blurPx) {
+    var scale = Math.max(W / img.width, H / img.height);
+    var dw = img.width * scale;
+    var dh = img.height * scale;
+    var dx = (W - dw) / 2;
+    var dy = (H - dh) / 2;
+
+    ctx.save();
+    ctx.globalAlpha = alpha == null ? 1 : alpha;
+    ctx.imageSmoothingEnabled = false;
+    if (blurPx && "filter" in ctx) {
+      ctx.filter = "blur(" + blurPx + "px)";
+    }
+    ctx.drawImage(img, dx - 12, dy - 12, dw + 24, dh + 24);
+    ctx.restore();
+  }
+
+  function drawSmartSceneAsset(key, color) {
+    var asset = app.assets[key];
+    if (!asset || !asset.ready) {
+      return false;
+    }
+    var img = asset.image;
+    var coverScale = Math.max(W / img.width, H / img.height);
+    var coverW = img.width * coverScale;
+    var coverH = img.height * coverScale;
+    var cropX = Math.max(0, (coverW - W) / coverW / 2);
+    var cropY = Math.max(0, (coverH - H) / coverH / 2);
+    var canCoverSafely = cropX <= 0.08 && cropY <= 0.10;
+    var scale;
+    var dw;
+    var dh;
+    var dx;
+    var dy;
+
+    sceneFill(color);
+    drawCoverImage(img, 0.28, 0);
+
+    if (canCoverSafely) {
+      scale = coverScale;
+      dw = coverW;
+      dh = coverH;
+      dx = (W - dw) / 2;
+      dy = (H - dh) / 2;
+      app.sceneDrawRect = {
+        x: dx,
+        y: dy,
+        w: dw,
+        h: dh,
+        scale: scale,
+        sx: 0,
+        sy: 0,
+        sw: img.width,
+        sh: img.height
+      };
+    } else {
+      scale = Math.min(W / img.width, H / img.height);
+      dw = img.width * scale;
+      dh = img.height * scale;
+      dx = (W - dw) / 2;
+      dy = 0;
+      app.sceneDrawRect = {
+        x: dx,
+        y: dy,
+        w: dw,
+        h: dh,
+        scale: scale,
+        sx: 0,
+        sy: 0,
+        sw: img.width,
+        sh: img.height
+      };
+    }
+
+    ctx.save();
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(img, dx, dy, dw, dh);
+    ctx.restore();
+
+    if (!canCoverSafely && dy + dh < H) {
+      var rgb = hexToRgb(color);
+      var fade = ctx.createLinearGradient(0, Math.max(0, dy + dh - 56), 0, H);
+      fade.addColorStop(0, "rgba(255,255,255,0)");
+      fade.addColorStop(0.34, "rgba(255,255,255,0.42)");
+      fade.addColorStop(1, "rgba(" + rgb.r + "," + rgb.g + "," + rgb.b + ",0.20)");
+      ctx.fillStyle = fade;
+      ctx.fillRect(0, Math.max(0, dy + dh - 56), W, H - Math.max(0, dy + dh - 56));
+    }
+
     return true;
   }
 
@@ -500,12 +728,161 @@
     ctx.fill();
   }
 
+  function drawMorningRain() {
+    var rect = RAIN_RECT;
+    var margin = 44;
+    var time = app.time || 0;
+
+    ctx.save();
+    roundRectPath(rect.x + 4, rect.y + 4, rect.w - 8, rect.h - 8, 8);
+    ctx.clip();
+
+    ctx.lineCap = "round";
+    ctx.lineWidth = 1.25;
+    ctx.strokeStyle = "rgb(78, 132, 151)";
+    for (var i = 0; i < app.rainDrops.length; i += 1) {
+      var drop = app.rainDrops[i];
+      var y = rect.y + ((drop.baseY + time * drop.speed) % (rect.h + margin)) - margin;
+      var x = rect.x + drop.x + Math.sin(time * drop.drift + drop.phase) * 2;
+      var alpha = drop.alpha + Math.sin(time * 1.8 + drop.phase) * 0.04;
+
+      ctx.globalAlpha = Math.max(0.14, alpha);
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + drop.slant, y + drop.length);
+      ctx.stroke();
+    }
+
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = "rgb(104, 155, 166)";
+    for (var j = 0; j < app.rainStreaks.length; j += 1) {
+      var streak = app.rainStreaks[j];
+      var sy = rect.y + ((streak.baseY + time * streak.speed) % (rect.h + margin + 36)) - margin;
+      var sx = rect.x + streak.x + Math.sin(time * 0.65 + streak.phase) * 1.2;
+      var sAlpha = streak.alpha + Math.sin(time * 1.1 + streak.phase) * 0.03;
+
+      ctx.globalAlpha = Math.max(0.08, sAlpha);
+      ctx.beginPath();
+      ctx.moveTo(sx, sy);
+      ctx.lineTo(sx + 1.5, sy + streak.length);
+      ctx.stroke();
+    }
+
+    ctx.fillStyle = "rgb(235, 252, 255)";
+    for (var k = 0; k < app.rainSparkles.length; k += 1) {
+      var sparkle = app.rainSparkles[k];
+      var sparkleAlpha = sparkle.alpha + Math.sin(time * sparkle.freq + sparkle.phase) * 0.08;
+      ctx.globalAlpha = Math.max(0.02, sparkleAlpha);
+      ctx.beginPath();
+      ctx.arc(rect.x + sparkle.x, rect.y + sparkle.y, sparkle.radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.restore();
+  }
+
+  function drawStageWind() {
+    var rect = WIND_RECT;
+    var time = app.time || 0;
+
+    ctx.save();
+    roundRectPath(rect.x, rect.y, rect.w, rect.h, 8);
+    ctx.clip();
+    ctx.lineCap = "round";
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "rgb(238, 255, 248)";
+
+    for (var i = 0; i < app.windGusts.length; i += 1) {
+      var gust = app.windGusts[i];
+      var x = rect.x + ((gust.baseX + time * gust.speed) % (rect.w + 86)) - 46;
+      var y = rect.y + gust.y + Math.sin(time * 1.6 + gust.phase) * gust.amp;
+      var alpha = gust.alpha + Math.sin(time * 1.25 + gust.phase) * 0.06;
+
+      ctx.globalAlpha = Math.max(0.05, alpha);
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.bezierCurveTo(x + gust.width * 0.32, y - gust.amp, x + gust.width * 0.62, y + gust.amp, x + gust.width, y);
+      ctx.stroke();
+    }
+
+    ctx.fillStyle = "rgb(255, 255, 255)";
+    for (var j = 0; j < app.windMotes.length; j += 1) {
+      var mote = app.windMotes[j];
+      var mx = rect.x + ((mote.baseX + time * mote.speed) % (rect.w + 70)) - 35;
+      var my = rect.y + mote.y + Math.sin(time * 2 + mote.phase) * 4;
+      var mAlpha = mote.alpha + Math.sin(time * 1.7 + mote.phase) * 0.05;
+
+      ctx.globalAlpha = Math.max(0.04, mAlpha);
+      ctx.beginPath();
+      ctx.arc(mx, my, mote.radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.restore();
+  }
+
+  function drawDinerSteam() {
+    var rect = STEAM_RECT;
+    var time = app.time || 0;
+    var margin = 44;
+
+    ctx.save();
+    roundRectPath(rect.x, rect.y, rect.w, rect.h, 8);
+    ctx.clip();
+    ctx.lineCap = "round";
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "rgb(255, 248, 226)";
+
+    for (var i = 0; i < app.steamWisps.length; i += 1) {
+      var wisp = app.steamWisps[i];
+      var progress = ((wisp.baseY + time * wisp.speed) % (rect.h + margin)) / (rect.h + margin);
+      var y = rect.y + rect.h - progress * (rect.h + margin) + 14;
+      var x = rect.x + wisp.x + Math.sin(time * 1.1 + wisp.phase) * 5;
+      var sway = Math.sin(time * 1.4 + wisp.phase) * wisp.sway;
+      var alpha = (1 - progress) * wisp.alpha + Math.sin(time * 1.3 + wisp.phase) * 0.03;
+
+      ctx.globalAlpha = Math.max(0.03, alpha);
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.bezierCurveTo(x + sway, y - wisp.height * 0.32, x - sway * 0.5, y - wisp.height * 0.68, x + sway * 0.35, y - wisp.height);
+      ctx.stroke();
+    }
+
+    ctx.fillStyle = "rgb(255, 250, 232)";
+    for (var j = 0; j < app.steamPuffs.length; j += 1) {
+      var puff = app.steamPuffs[j];
+      var puffProgress = ((puff.baseY + time * puff.speed) % (rect.h + margin)) / (rect.h + margin);
+      var px = rect.x + puff.x + Math.sin(time * 0.9 + puff.phase) * 9;
+      var py = rect.y + rect.h - puffProgress * (rect.h + margin) + 6;
+      var pAlpha = (1 - puffProgress) * puff.alpha + Math.sin(time * 1.2 + puff.phase) * 0.02;
+
+      ctx.globalAlpha = Math.max(0.02, pAlpha);
+      ctx.beginPath();
+      ctx.ellipse(px, py, puff.radius * 0.72, puff.radius, 0.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.restore();
+  }
+
+  function drawSceneEffects(scene) {
+    if (scene && scene.id === "morning") {
+      drawMorningRain();
+    } else if (scene && scene.id === "stage") {
+      drawStageWind();
+    } else if (scene && scene.id === "diner") {
+      drawDinerSteam();
+    }
+  }
+
   function drawSceneBackground(scene) {
-    if (!drawAsset(scene.asset, 0, 0, W, H, 1)) {
+    if (!drawSmartSceneAsset(scene.asset, scene.color)) {
+      app.sceneDrawRect = { x: 0, y: 0, w: W, h: H, scale: 1, sx: 0, sy: 0, sw: W, sh: H };
       drawFallbackBackground(scene);
     }
     ctx.fillStyle = "rgba(255,255,255,0.10)";
     ctx.fillRect(0, 0, W, H);
+    drawSceneEffects(scene);
   }
 
   function addButton(id, x, y, w, h, label, variant, onTap) {
@@ -681,17 +1058,47 @@
 
   function drawHotspot(event, active) {
     var hotspot = event.hotspot;
-    drawHotspotObject(hotspot, active);
+    var secret = secretForEvent(event);
+    var pulse = active ? Math.sin(app.time * 4) : 0;
+    var pad = active ? 7 + pulse * 3 : 4;
+    var x = hotspot.x - pad;
+    var y = hotspot.y - pad;
+    var w = hotspot.w + pad * 2;
+    var h = hotspot.h + pad * 2;
+
+    ctx.save();
+    ctx.globalAlpha = active ? 1 : 0.72;
+    fillRoundRect(x, y, w, h, 8, active ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.10)");
+    strokeRoundRect(x, y, w, h, 8, active ? "rgba(255,255,255,0.86)" : "rgba(255,255,255,0.56)", active ? 3 : 2);
+    strokeRoundRect(x + 3, y + 3, w - 6, h - 6, 8, active ? "rgba(47,139,134,0.48)" : "rgba(47,139,134,0.24)", 1);
+    ctx.restore();
 
     if (active) {
-      var pad = 10 + Math.sin(app.time * 4) * 4;
-      strokeRoundRect(hotspot.x - pad, hotspot.y - pad, hotspot.w + pad * 2, hotspot.h + pad * 2, 8, "rgba(47,139,134,0.48)", 2);
-      fillRoundRect(hotspot.x + hotspot.w / 2 - 42, hotspot.y + hotspot.h + 14, 84, 28, 8, "rgba(255,255,255,0.82)");
+      ctx.font = "600 13px sans-serif";
+      var label = event.objectLabel || hotspot.label;
+      var labelW = Math.max(72, Math.min(122, ctx.measureText(label).width + 28));
+      var labelX = Math.max(14, Math.min(W - labelW - 14, hotspot.x + hotspot.w / 2 - labelW / 2));
+      var labelY = hotspot.y + hotspot.h + 12;
+      if (labelY + 28 > 574) {
+        labelY = Math.max(96, hotspot.y - 36);
+      }
+      fillRoundRect(labelX, labelY, labelW, 28, 8, "rgba(255,255,255,0.88)");
+      strokeRoundRect(labelX, labelY, labelW, 28, 8, "rgba(47,139,134,0.18)", 1);
       ctx.font = "600 13px sans-serif";
       ctx.fillStyle = "#315b58";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText(event.objectLabel || hotspot.label, hotspot.x + hotspot.w / 2, hotspot.y + hotspot.h + 28);
+      ctx.fillText(label, labelX + labelW / 2, labelY + 14);
+
+      if (secret) {
+        var hintW = 66;
+        var hintX = Math.max(14, Math.min(W - hintW - 14, labelX + labelW - 18));
+        var hintY = Math.max(96, labelY - 32);
+        fillRoundRect(hintX, hintY, hintW, 24, 8, "rgba(210,98,98,0.90)");
+        ctx.font = "600 12px sans-serif";
+        ctx.fillStyle = "#ffffff";
+        ctx.fillText("长按", hintX + hintW / 2, hintY + 12);
+      }
     }
   }
 
@@ -1066,6 +1473,7 @@
     app = createAppState();
     fitCanvas();
     loadAssets();
+    initRainEffect();
     bindEvents();
     window.requestAnimationFrame(loop);
   }
