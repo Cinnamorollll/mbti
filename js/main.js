@@ -32,6 +32,7 @@
       lastPick: { EI: null, SN: null, TF: null, JP: null },
       choices: [],
       assets: {},
+      rainDrops: [],
       buttons: [],
       hotspots: [],
       pointer: null,
@@ -75,6 +76,31 @@
       img.onerror = function () { app.assets[key].failed = true; };
       img.src = DATA.assets[key];
     });
+  }
+
+  function seededRandom(seed) {
+    var state = seed >>> 0;
+    return function () {
+      state = (state * 1664525 + 1013904223) >>> 0;
+      return state / 4294967296;
+    };
+  }
+
+  function initRainSystem() {
+    var rand = seededRandom(20260419);
+    app.rainDrops = [];
+    for (var i = 0; i < 52; i += 1) {
+      app.rainDrops.push({
+        x: rand() * (W + 120) - 60,
+        y: rand() * (H + 220) - 120,
+        len: 16 + rand() * 24,
+        speed: 260 + rand() * 220,
+        sway: 0.5 + rand() * 1.4,
+        phase: rand() * Math.PI * 2,
+        width: 1 + rand() * 1.3,
+        alpha: 0.52 + rand() * 0.24
+      });
+    }
   }
 
   function sceneById(id) {
@@ -133,6 +159,7 @@
     var oldAssets = app.assets;
     app = createAppState();
     app.assets = oldAssets;
+    initRainSystem();
     audio.confirm();
     if (audio.setMode) audio.setMode("cover");
   }
@@ -272,6 +299,67 @@
     ctx.fillRect(0, 0, W, H);
   }
 
+  function sceneHasRain(scene) {
+    if (!scene) return false;
+    return scene.id === "s01" || scene.id === "s02a" || scene.id === "s02b" || scene.id === "s02c" || scene.id === "s02d" || scene.id === "s04" || scene.id === "s07" || scene.id === "s15";
+  }
+
+  function drawRainEffects(scene) {
+    if (!sceneHasRain(scene) || !app.rainDrops || !app.rainDrops.length) return;
+    var span = H + 240;
+    ctx.save();
+    ctx.lineCap = "round";
+    for (var i = 0; i < app.rainDrops.length; i += 1) {
+      var drop = app.rainDrops[i];
+      var y = ((drop.y + app.time * drop.speed) % span) - 120;
+      var x = drop.x + Math.sin(app.time * drop.sway + drop.phase) * 5;
+      var dx = drop.len * 0.24;
+      ctx.beginPath();
+      ctx.strokeStyle = "rgba(106,150,191," + Math.min(0.44, drop.alpha * 0.6) + ")";
+      ctx.lineWidth = drop.width + 0.8;
+      ctx.moveTo(x, y);
+      ctx.lineTo(x - dx, y + drop.len);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.strokeStyle = "rgba(220,240,255," + drop.alpha + ")";
+      ctx.lineWidth = drop.width;
+      ctx.moveTo(x, y);
+      ctx.lineTo(x - dx, y + drop.len);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawCoverRainEffects() {
+    if (!app.rainDrops || !app.rainDrops.length) return;
+    var rect = { x: 98, y: 114, w: 194, h: 128 };
+    var span = rect.h + 110;
+    ctx.save();
+    roundRectPath(rect.x, rect.y, rect.w, rect.h, 4);
+    ctx.clip();
+    ctx.lineCap = "round";
+    for (var i = 0; i < app.rainDrops.length; i += 1) {
+      var drop = app.rainDrops[i];
+      var y = rect.y + (((drop.y * 0.72) + app.time * (drop.speed * 0.72)) % span) - 55;
+      var x = rect.x + (((drop.x * 0.62) + i * 11) % (rect.w + 40)) - 20 + Math.sin(app.time * drop.sway + drop.phase) * 1.8;
+      var len = drop.len * 0.7;
+      var dx = len * 0.16;
+      ctx.beginPath();
+      ctx.strokeStyle = "rgba(94,136,182," + Math.min(0.42, drop.alpha * 0.58) + ")";
+      ctx.lineWidth = drop.width + 0.7;
+      ctx.moveTo(x, y);
+      ctx.lineTo(x - dx, y + len);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.strokeStyle = "rgba(228,244,255," + Math.min(0.82, drop.alpha + 0.06) + ")";
+      ctx.lineWidth = Math.max(0.9, drop.width);
+      ctx.moveTo(x, y);
+      ctx.lineTo(x - dx, y + len);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
   function drawAsset(key, x, y, w, h, alpha) {
     var asset = app.assets[key];
     if (!asset || !asset.ready) return false;
@@ -336,6 +424,7 @@
         strokeRoundRect(item.x, item.y, item.w, item.h, 8, "rgba(47,139,134,0.20)", 1);
       }
     }
+    drawRainEffects(scene);
   }
 
   function wrapLines(text, maxWidth, font) {
@@ -785,6 +874,7 @@
   function boot() {
     if (!DATA.config || !DATA.assets || !DATA.scenes || !DATA.events || !DATA.results || !canvas || !ctx) throw new Error(ERROR_TEXT);
     app = createAppState();
+    initRainSystem();
     fitCanvas();
     loadAssets();
     bindEvents();
