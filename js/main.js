@@ -110,6 +110,7 @@
     if (scene.endingKey) app.resultEndingKey = scene.endingKey;
     app.screen = scene.interactionMode === "continueToNext" || scene.interactionMode === "ending" ? "scenePreview" : "sceneIntro";
     audio.transition();
+    if (audio.setScene) audio.setScene(scene.id);
   }
 
   function startGame() {
@@ -118,12 +119,14 @@
     app.activeEventId = null;
     app.screen = "explore";
     audio.confirm();
+    if (audio.setScene) audio.setScene(app.currentSceneId);
   }
 
   function enterPrologue() {
     app.textPage = 0;
     app.screen = "intro";
     audio.confirm();
+    if (audio.setMode) audio.setMode("prologue");
   }
 
   function resetGame() {
@@ -131,6 +134,7 @@
     app = createAppState();
     app.assets = oldAssets;
     audio.confirm();
+    if (audio.setMode) audio.setMode("cover");
   }
 
   function resolveSceneNext(scene) {
@@ -197,6 +201,7 @@
 
   function onPointerDown(event) {
     event.preventDefault();
+    if (audio.unlock) audio.unlock();
     var p = getPointerPoint(event);
     app.pointer = { x: p.x, y: p.y, target: hitTest(app.buttons, p.x, p.y) || hitTest(app.hotspots, p.x, p.y) };
   }
@@ -372,6 +377,22 @@
     return pages;
   }
 
+  function recapSentence(text) {
+    var cleaned = String(text || "").replace(/\s+/g, " ").trim();
+    if (!cleaned) return "";
+    var firstStop = cleaned.split(/[。！？\n]/)[0].trim();
+    var sentence = firstStop || cleaned;
+    if (sentence.length > 28 && sentence.indexOf("，") >= 0) {
+      var parts = sentence.split("，").filter(function (part) { return part && part.trim(); });
+      if (parts.length >= 2) {
+        sentence = parts[0].trim() + "，" + parts[1].trim();
+        if (sentence.length > 28) sentence = parts[0].trim();
+      }
+    }
+    if (!/[。！？]$/.test(sentence)) sentence += "。";
+    return sentence;
+  }
+
   function drawLines(lines, x, y, lineHeight, font, color) {
     ctx.font = font;
     ctx.fillStyle = color;
@@ -449,19 +470,18 @@
     ctx.fillRect(0, 0, W, H);
     fillRoundRect(28, 96, 334, 590, 8, "rgba(255,255,255,0.92)");
     strokeRoundRect(28, 96, 334, 590, 8, "rgba(47,139,134,0.18)", 1);
-    ctx.font = "700 22px sans-serif";
+    ctx.font = "700 25px sans-serif";
     ctx.fillStyle = "#245b56";
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
-    ctx.fillText("\u7b2c\u96f6\u5e55", W / 2, 122);
-    ctx.font = "700 25px sans-serif";
-    ctx.fillText("\u4fe1\u30fb\u672a\u5bc4\u30fb\u8c37\u96e8\u524d\u591c", W / 2, 158);
-    drawLines(pages[pageIndex], 52, 212, 20, "13px sans-serif", "#385a56");
+    ctx.fillText("\u4fe1\u30fb\u672a\u5bc4\u30fb\u8c37\u96e8\u524d\u591c", W / 2, 136);
+    drawLines(pages[pageIndex], 52, 196, 20, "13px sans-serif", "#385a56");
     ctx.font = "600 12px sans-serif";
     ctx.fillStyle = "#6a7b78";
     ctx.textBaseline = "middle";
     ctx.fillText((pageIndex + 1) + " / " + pages.length, W / 2, 656);
     addButton("prologue-next", 92, 716, 206, 52, isLast ? "\u8fdb\u5165\u8c37\u96e8\u6e05\u6668" : "\u7ee7\u7eed\u9605\u8bfb", "primary", advancePrologue);
+    drawAudioButton();
   }
 
   function advanceSceneIntro() {
@@ -505,23 +525,22 @@
     ctx.fillRect(0, 0, W, H);
     fillRoundRect(28, 112, 334, 552, 8, "rgba(255,255,255,0.90)");
     strokeRoundRect(28, 112, 334, 552, 8, "rgba(47,139,134,0.18)", 1);
-    ctx.font = "700 22px sans-serif";
+    ctx.font = "700 27px sans-serif";
     ctx.fillStyle = "#245b56";
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
-    ctx.fillText(scene.title, W / 2, 136);
-    ctx.font = "700 27px sans-serif";
-    ctx.fillText(scene.name, W / 2, 172);
-    fillRoundRect(72, 218, 246, 30, 8, "rgba(47,139,134,0.12)");
+    ctx.fillText(scene.name, W / 2, 148);
+    fillRoundRect(72, 198, 246, 30, 8, "rgba(47,139,134,0.12)");
     ctx.font = "600 12px sans-serif";
     ctx.fillStyle = "#2f615d";
     ctx.textBaseline = "middle";
-    ctx.fillText(scene.time, W / 2, 233);
-    drawLines(pages[pageIndex], 52, 276, 19, "13px sans-serif", "#385a56");
+    ctx.fillText(scene.time, W / 2, 213);
+    drawLines(pages[pageIndex], 52, 256, 19, "13px sans-serif", "#385a56");
     ctx.font = "600 12px sans-serif";
     ctx.fillStyle = "#6a7b78";
     ctx.fillText((pageIndex + 1) + " / " + pages.length, W / 2, 638);
     addButton("scene-next", 92, 690, 206, 52, label, "primary", advanceSceneIntro);
+    if (scene.id === "s01") drawAudioButton();
   }
 
   function drawScenePreview() {
@@ -611,7 +630,8 @@
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
     ctx.fillText(scene.name, 48, 634);
-    drawLines(wrapLines("\u70b9\u51fb\u9ad8\u4eae\u7684\u7269\u4ef6\u6216\u89d2\u8272\uff0c\u8fdb\u5165\u8fd9\u4e00\u5e55\u7684\u5173\u952e\u9009\u62e9\u3002", 292, "15px sans-serif"), 48, 670, 22, "15px sans-serif", "#496966");
+    drawLines(wrapLines("\u70b9\u4eae\u7684\u7269\u4ef6\u4f1a\u5e26\u4f60\u628a\u8fd9\u4e00\u6bb5\u6545\u4e8b\u7ee7\u7eed\u5f80\u4e0b\u8d70\u3002", 292, "15px sans-serif"), 48, 670, 22, "15px sans-serif", "#496966");
+    if (scene.id === "s01") drawAudioButton();
   }
 
   function choiceLayout(choices) {
@@ -640,19 +660,15 @@
     drawSceneBackground(scene);
     drawChoiceCatAnimation(event);
     var layout = choiceLayout(event.choices);
+    var summaryLines = wrapLines(recapSentence(scene.intro || scene.name), 286, "13px sans-serif");
+    var summaryHeight = Math.max(22, summaryLines.length * 17);
     var contentHeight = layout.layouts.reduce(function (sum, item) { return sum + item.h + 8; }, 0) - 8;
-    var panelHeight = Math.min(386, Math.max(306, contentHeight + 86));
+    var panelHeight = Math.min(404, Math.max(306, contentHeight + summaryHeight + 54));
     var panelY = H - panelHeight - 14;
     fillRoundRect(20, panelY, 350, panelHeight, 8, "rgba(255,255,255,0.90)");
     strokeRoundRect(20, panelY, 350, panelHeight, 8, "rgba(47,139,134,0.18)", 1);
-    fillRoundRect(36, panelY + 18, 124, 28, 8, "rgba(47,139,134,0.12)");
-    ctx.font = "600 13px sans-serif";
-    ctx.fillStyle = "#2f615d";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(event.title, 98, panelY + 32);
-    drawLines(wrapLines(event.prompt, 182, "12px sans-serif"), 174, panelY + 18, 16, "12px sans-serif", "#2d4542");
-    var y = panelY + 62;
+    drawLines(summaryLines, 38, panelY + 18, 17, "13px sans-serif", "#315b58");
+    var y = panelY + 20 + summaryHeight + 12;
     for (var i = 0; i < layout.layouts.length; i += 1) {
       (function (item, index) {
         var choice = item.choice;
@@ -671,6 +687,7 @@
         y += h + 8;
       })(layout.layouts[i], i);
     }
+    if (scene.id === "s01") drawAudioButton();
   }
 
   function drawDimensionBar(x, y, left, right, pair) {
@@ -771,6 +788,7 @@
     fitCanvas();
     loadAssets();
     bindEvents();
+    if (audio.setMode) audio.setMode("cover");
     window.requestAnimationFrame(loop);
   }
 
