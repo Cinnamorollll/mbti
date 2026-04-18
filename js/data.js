@@ -3,8 +3,8 @@
 
   window.GAME_DATA = {
     title: "未寄出的山海",
-    subtitle: "谷雨这天，你把一封信带过清晨、街口、灯下与深夜。",
-    concept: "在一段半现实半幻想的一天里，选择会慢慢长成你的 16 型人格海报。",
+    subtitle: "去年谷雨，你为《山海》互动人格海报写下第一版草稿，也给一年后的自己写了一封信。那封信一直没寄出。今天又是谷雨，也是《山海》展示的日子。清晨你翻出旧信和草稿，带着它们走过一天：上午定方向，午后找素材，傍晚完成展示，深夜回看自己。20 个选择既是在补完作品，也是在生成最后的人格结果。",
+    concept: "信里写着：如果还不明白自己，就把普通的一天认真过完。",
     config: {
       width: 390,
       height: 844,
@@ -20,15 +20,31 @@
       JP: "P"
     },
     assets: {
-      bgMorning: "./images/bg_morning.png",
-      bgOffice: "./images/bg_office.png",
-      bgStreet: "./images/bg_street.png",
-      bgStage: "./images/bg_stage.png",
-      bgDiner: "./images/bg_diner.png",
+      bgMorning: "./images/bg_morning.webp",
+      bgOffice: "./images/bg_office.webp",
+      bgStreet: "./images/bg_street.webp",
+      bgStage: "./images/bg_stage.webp",
+      bgDiner: "./images/bg_diner.webp",
       objMirror: "./images/obj_mirror.svg",
       objLetter: "./images/obj_letter.svg",
       objMap: "./images/obj_map.svg",
-      badgeResult: "./images/badge_result.svg"
+      badgeResult: "./images/badge_result.svg",
+      ISTJ: "./images/ISTJ.png",
+      ISFJ: "./images/ISFJ.png",
+      INFJ: "./images/INFJ.png",
+      INTJ: "./images/INTJ.png",
+      ISTP: "./images/ISTP.png",
+      ISFP: "./images/ISFP.png",
+      INFP: "./images/INFP.png",
+      INTP: "./images/INTP.png",
+      ESTP: "./images/ESTP.png",
+      ESFP: "./images/ESFP.png",
+      ENFP: "./images/ENFP.png",
+      ENTP: "./images/ENTP.png",
+      ESTJ: "./images/ESTJ.png",
+      ESFJ: "./images/ESFJ.png",
+      ENFJ: "./images/ENFJ.png",
+      ENTJ: "./images/ENTJ.png"
     },
     scenes: [
       {
@@ -38,7 +54,7 @@
         time: "07:18",
         asset: "bgMorning",
         color: "#4f9f8f",
-        intro: "雨把窗沿敲得很轻。你醒来时，桌上有一封还没有寄出的信。"
+        intro: "雨落在窗外。你从抽屉里翻出去年写给自己的信，信里夹着《山海》的旧草稿。今天傍晚，它就要被展示。"
       },
       {
         id: "office",
@@ -47,7 +63,7 @@
         time: "10:03",
         asset: "bgOffice",
         color: "#427fc3",
-        intro: "电梯门合上又打开，桌面上的便签像一小片等你整理的潮汐。"
+        intro: "你带着信来到办公室。上午的会要定下《山海》的方向，屏幕还没亮，桌上的便签已经堆成小小的潮水。"
       },
       {
         id: "street",
@@ -56,7 +72,7 @@
         time: "14:27",
         asset: "bgStreet",
         color: "#d26262",
-        intro: "雨停了一半。街角玻璃映出你，也映出一条不太确定的路。"
+        intro: "会开完，你离开办公室去找最后的素材。雨停了一半，街口的倒影、地图和路人，都像在替《山海》补空白。"
       },
       {
         id: "stage",
@@ -65,7 +81,7 @@
         time: "18:40",
         asset: "bgStage",
         color: "#6b8f4f",
-        intro: "灯光亮起，山海的影子落在墙上。每个人都在等一个可以继续的方向。"
+        intro: "素材带回来了，灯也亮了。《山海》被投到墙上。展示前的每一次分歧，都在逼你说清自己相信什么。"
       },
       {
         id: "diner",
@@ -74,7 +90,7 @@
         time: "23:12",
         asset: "bgDiner",
         color: "#2f8b86",
-        intro: "最后一盏灯还亮着。汤的热气往上走，像一条慢慢回家的河。"
+        intro: "展示结束后，你没有立刻回家。旧信和海报草稿摊在灯下，热汤升起白气，一整天的选择终于落回你手里。"
       }
     ],
     events: [
@@ -84,12 +100,12 @@
         title: "窗边醒来",
         objectLabel: "雨窗",
         speaker: "清晨",
-        prompt: "手机亮了一下，窗外正下着谷雨。你醒来的第一件事，会把注意力放在哪里？",
+        prompt: "手机亮了一下，窗外正下着谷雨。抽屉半开着，露出那封去年没寄出的信。醒来后，你会先做什么？",
         hotspot: { id: "window", x: 60, y: 54, w: 150, h: 170, kind: "window", label: "雨窗" },
         choices: [
-          { text: "先回应消息", score: { E: 2, F: 1, J: 1 }, feedback: "你把一句早安发出去，房间像被轻轻点亮。有人回应时，你的今天也多了一条回声。" },
-          { text: "先观察雨声", score: { I: 2, N: 1, P: 1 }, feedback: "你没有急着打开世界，只听雨声把时间揉软。那些还没说出口的话，先在心里散开。" },
-          { text: "先整理今日计划", score: { J: 2, S: 1, T: 1 }, feedback: "你把今天拆成几段可抵达的小路。窗外还在下雨，但你的脚步已经有了顺序。" }
+          { text: "先回复消息", score: { E: 2, F: 1, J: 1 }, feedback: "你先把外面的世界接进来。一句早安发出去，房间像被轻轻点亮。" },
+          { text: "先静静听雨声", score: { I: 2, N: 1, P: 1 }, feedback: "你没有急着碰那封信，只听雨落在窗上。时间慢下来，心里的话也慢慢浮上来。" },
+          { text: "先规划今天的事", score: { J: 2, S: 1, T: 1 }, feedback: "你把今天要做的事排成几段。旧信还没拆开，但你的脚步已经有了顺序。" }
         ]
       },
       {
@@ -97,14 +113,15 @@
         sceneId: "morning",
         title: "镜子前的停顿",
         objectLabel: "镜子",
+        requires: ["e01"],
         speaker: "镜子",
-        prompt: "洗漱台前，镜子里的你比平时安静一点。你会怎样描述此刻的自己？",
-        hint: "长按镜子，也许能听见更深处。",
+        prompt: "信里第一句写着：“如果还不明白自己，就先照一照。”镜子里的你比平时安静。你会怎样形容此刻的自己？",
+        hint: "长按镜子，也许能听见心底的声音。",
         hotspot: { id: "mirror", x: 270, y: 96, w: 90, h: 116, kind: "mirror", asset: "objMirror", label: "镜子" },
         choices: [
-          { text: "用事实描述自己", score: { S: 2, T: 1 }, feedback: "你确认睡眠、天气、时间和要带走的物品。清楚的事实让你找回身体的重心。" },
-          { text: "用感觉描述自己", score: { N: 2, F: 1, I: 1 }, feedback: "你说自己像一封折了一半的信。镜面没有反驳，只把这句话收进微光里。" },
-          { text: "用目标描述自己", score: { J: 2, T: 1, E: 1 }, feedback: "你把今天想完成的事说给镜子听。声音落下时，像给自己按下一个小小的开始键。" }
+          { text: "用事实描述自己", score: { S: 2, T: 1 }, feedback: "你确认睡眠、天气、时间和要带的东西。清晰的现实，让你找回踏实的状态。" },
+          { text: "用感受描述自己", score: { N: 2, F: 1, I: 1 }, feedback: "你说自己像一封折到一半的信。镜子没有说话，只是把这份心情悄悄收下。" },
+          { text: "用目标描述自己", score: { J: 2, T: 1, E: 1 }, feedback: "你把今天想完成的事说给镜子听。声音落下，像给自己按下了启动键。" }
         ]
       },
       {
@@ -112,13 +129,14 @@
         sceneId: "morning",
         title: "桌上的早餐",
         objectLabel: "早餐",
+        requires: ["e01"],
         speaker: "桌面",
-        prompt: "杯子边缘还留着一点温度。你准备怎么对待这个慢下来的早晨？",
+        prompt: "早餐旁边摊着《山海》旧草稿。山那边写着“稳定”，海那边写着“出发”。出门前，你会怎样对待这个早晨？",
         hotspot: { id: "breakfast", x: 10, y: 282, w: 150, h: 104, kind: "table", label: "早餐" },
         choices: [
-          { text: "先照顾自己的感受", score: { I: 2, F: 1, P: 1 }, feedback: "你把节奏放低，先问自己想不想继续。被照顾的那一小块心情，慢慢回暖。" },
-          { text: "按习惯准备", score: { S: 2, J: 1 }, feedback: "你按熟悉的顺序摆好杯子、面包和钥匙。稳定的小动作，替你撑起一整天。" },
-          { text: "临时改变安排", score: { P: 2, N: 1 }, feedback: "你突然决定换一种早餐。新的味道不一定更好，但它让今天不再完全可预测。" }
+          { text: "先照顾自己的心情", score: { I: 2, F: 1, P: 1 }, feedback: "你放慢节奏，先问问自己想怎么做。被温柔对待的心情，一点点回暖。" },
+          { text: "按习惯有条不紊", score: { S: 2, J: 1 }, feedback: "你按熟悉的步骤摆好杯子、面包和钥匙。稳定的小事，支撑起你一整天的安心。" },
+          { text: "临时改变安排", score: { P: 2, N: 1 }, feedback: "你突然想换一种早餐。新的味道不一定更好，但让今天多了一点惊喜。" }
         ]
       },
       {
@@ -126,13 +144,14 @@
         sceneId: "morning",
         title: "未寄出的信",
         objectLabel: "信",
+        requires: ["e02", "e03"],
         speaker: "信纸",
-        prompt: "那封未寄出的信躺在桌角，封口压着一小片雨光。你会怎么处理它？",
+        prompt: "你终于拆开信。里面写着：“如果还不明白自己，就把普通的一天认真过完。”你会怎么带走它？",
         hotspot: { id: "letterMorning", x: 236, y: 338, w: 112, h: 62, kind: "letter", asset: "objLetter", label: "未寄出" },
         choices: [
-          { text: "今天就寄出", score: { E: 2, F: 1, J: 1 }, feedback: "你把信装进包里，像把一颗心放进有地址的清晨。它终于有了去处。" },
-          { text: "继续暂存", score: { I: 2, N: 1, P: 1 }, feedback: "你把信留在原处。并不是逃避，只是有些话需要再和自己相处一会儿。" },
-          { text: "拆开重写", score: { T: 2, N: 1, J: 1 }, feedback: "你拆开封口，把模糊的句子重新排列。情绪还在，但它开始有了更准确的形状。" }
+          { text: "今天就寄出", score: { E: 2, F: 1, J: 1 }, feedback: "你把信放进包里。它去年没有出发，今天至少可以陪你走完这段路。" },
+          { text: "先暂时放着", score: { I: 2, N: 1, P: 1 }, feedback: "你把信留在原地。不是逃避，只是有些话，需要再和自己待一会儿。" },
+          { text: "拆开重新写", score: { T: 2, N: 1, J: 1 }, feedback: "你拆开信封，把模糊的句子重新整理。心意还在，但表达变得更准确了。" }
         ]
       },
       {
@@ -141,12 +160,12 @@
         title: "早会前一分钟",
         objectLabel: "会议桌",
         speaker: "会议室",
-        prompt: "大家陆续坐下，投影还没完全亮起。你会怎样进入这个上午？",
+        prompt: "办公室里，大家等着讨论《山海》的展示版本。投影还没完全亮起，你会以怎样的状态开始这个上午？",
         hotspot: { id: "meeting", x: 34, y: 224, w: 156, h: 106, kind: "meeting", label: "早会" },
         choices: [
-          { text: "主动开场", score: { E: 2, J: 1, F: 1 }, feedback: "你先抛出一个轻快的开头。空气被打开，话题也顺势找到了入口。" },
-          { text: "安静记录", score: { I: 2, S: 1, T: 1 }, feedback: "你把关键词写下来，不急着抢在前面。信息在纸上排好队，慢慢露出结构。" },
-          { text: "先确认规则", score: { J: 2, T: 1, S: 1 }, feedback: "你先把边界问清楚。有人松了口气，因为接下来终于知道该往哪里走。" }
+          { text: "主动带动气氛", score: { E: 2, J: 1, F: 1 }, feedback: "你先抛出一个轻松的开头。氛围打开了，话题也自然地展开。" },
+          { text: "安静记录要点", score: { I: 2, S: 1, T: 1 }, feedback: "你默默记下关键词，不急于发言。信息在纸上排列清晰，慢慢显出条理。" },
+          { text: "先确认规则流程", score: { J: 2, T: 1, S: 1 }, feedback: "你先问清边界与要求。有人松了口气，因为接下来终于知道该往哪走。" }
         ]
       },
       {
@@ -154,13 +173,14 @@
         sceneId: "office",
         title: "桌面上的便签",
         objectLabel: "便签",
+        requires: ["e05"],
         speaker: "便签",
-        prompt: "几张便签散在桌面上，有的写着任务，有的只画了一条弯弯的线。你先处理哪一种？",
+        prompt: "便签上混着任务、灵感和别人留下的小问题。它们都要进今天的版本里，你会先处理哪一类？",
         hotspot: { id: "notes", x: 292, y: 96, w: 86, h: 96, kind: "notes", label: "便签" },
         choices: [
-          { text: "整理顺序", score: { J: 2, S: 1, T: 1 }, feedback: "你把便签按轻重缓急排好。混乱不再挤在一起，桌面也像深呼吸了一次。" },
-          { text: "画出灵感", score: { N: 2, P: 1, F: 1 }, feedback: "你沿着那条线继续画下去。它变成一座小山，又变成一条可以穿过去的路。" },
-          { text: "询问他人状态", score: { E: 2, F: 1 }, feedback: "你抬头问了一句还好吗。有人笑了笑，上午忽然没那么像一张冷冰冰的表格。" }
+          { text: "整理优先级", score: { J: 2, S: 1, T: 1 }, feedback: "你把便签按轻重缓急排好。混乱不再拥挤，桌面像做了一次深呼吸。" },
+          { text: "顺着灵感画画", score: { N: 2, P: 1, F: 1 }, feedback: "你沿着那条线继续画。它变成一座小山，又变成一条可以走过去的路。" },
+          { text: "关心同事状态", score: { E: 2, F: 1 }, feedback: "你抬头问一句“还好吗”。有人笑了笑，上午忽然不再像冰冷的表格。" }
         ]
       },
       {
@@ -168,13 +188,14 @@
         sceneId: "office",
         title: "旁人的求助",
         objectLabel: "同事",
+        requires: ["e05"],
         speaker: "旁人",
-        prompt: "身边的人小声问你：我是不是把事情搞乱了？你会先怎么回应？",
+        prompt: "负责素材的同事小声问：“我是不是把这一块弄乱了？”你会先怎么回应？",
         hotspot: { id: "helper", x: 4, y: 292, w: 112, h: 156, kind: "person", label: "旁人" },
         choices: [
-          { text: "陪对方说完", score: { F: 2, E: 1, P: 1 }, feedback: "你没有急着修正，只把位置让给对方的声音。话说完时，问题已经轻了一点。" },
-          { text: "给出解决步骤", score: { T: 2, J: 1, S: 1 }, feedback: "你把麻烦拆成三步。每一步都不大，但足够让人重新迈出去。" },
-          { text: "先自己查证", score: { I: 2, T: 1, J: 1 }, feedback: "你先把资料核一遍。确认过的答案，比安慰更能让你安心。" }
+          { text: "耐心听他说完", score: { F: 2, E: 1, P: 1 }, feedback: "你没有急着纠正，只是把说话的机会留给对方。话说完，问题已经轻了一半。" },
+          { text: "给出解决步骤", score: { T: 2, J: 1, S: 1 }, feedback: "你把麻烦拆成三步。每一步都不大，但足够让人重新往前走。" },
+          { text: "先自己核实情况", score: { I: 2, T: 1, J: 1 }, feedback: "你先把资料核对一遍。确定的答案，比安慰更让你安心。" }
         ]
       },
       {
@@ -182,13 +203,14 @@
         sceneId: "office",
         title: "临时任务",
         objectLabel: "新任务",
+        requires: ["e06", "e07"],
         speaker: "屏幕",
-        prompt: "一条新任务弹出来，时间紧，要求也有些模糊。你会如何接住它？",
+        prompt: "临近中午，屏幕弹出新要求：展示前还要补一组街头素材。时间紧，说明也有些模糊。你会怎么应对？",
         hotspot: { id: "task", x: 106, y: 70, w: 184, h: 126, kind: "screen", label: "临时任务" },
         choices: [
-          { text: "立刻推进", score: { E: 1, T: 1, J: 2 }, feedback: "你先把能动的部分推起来。方向不必完美，但停在原地一定不会抵达。" },
-          { text: "拆分计划", score: { S: 1, T: 1, J: 2 }, feedback: "你把任务切成清楚的块，再给每一块标上时间。模糊被折成了可执行的纸条。" },
-          { text: "保留弹性", score: { N: 1, F: 1, P: 2 }, feedback: "你留出一个可以转弯的口子。变化没有消失，但它不再像突然砸下来的雨。" }
+          { text: "立刻推进执行", score: { E: 1, T: 1, J: 2 }, feedback: "你先把能做的部分动起来。方向不必完美，但停着永远到不了。" },
+          { text: "拆分详细计划", score: { S: 1, T: 1, J: 2 }, feedback: "你把任务切成清晰的模块，标上时间。模糊被整理成可执行的步骤。" },
+          { text: "保留灵活空间", score: { N: 1, F: 1, P: 2 }, feedback: "你留出可以调整的余地。变化还在，但不再像突然落下的雨。" }
         ]
       },
       {
@@ -197,12 +219,12 @@
         title: "玻璃窗倒影",
         objectLabel: "倒影",
         speaker: "街口",
-        prompt: "玻璃窗里，你和雨后的街道叠在一起。下一步，你会怎么走？",
+        prompt: "会开完，你离开办公室。玻璃橱窗里，你和雨后街道叠在一起，像《山海》里还没画完的一页。下一步，你会怎么走？",
         hotspot: { id: "reflection", x: 226, y: 72, w: 150, h: 228, kind: "glass", label: "倒影" },
         choices: [
-          { text: "继续赶路", score: { S: 1, T: 1, J: 2 }, feedback: "你没有被倒影留住。脚步沿着原定路线往前，雨水在路边慢慢退开。" },
-          { text: "停下观察", score: { I: 1, N: 2, P: 1 }, feedback: "你停下来，看见玻璃里的自己像站在另一层天气里。那一秒很短，却足够安静。" },
-          { text: "改走小巷", score: { N: 1, P: 2, E: 1 }, feedback: "你绕进旁边的小巷。新的路没有提前说明，但它给了你一点轻微的兴奋。" }
+          { text: "继续按计划赶路", score: { S: 1, T: 1, J: 2 }, feedback: "你没有被影子停留。脚步沿着原定方向前进，路边的雨水渐渐退去。" },
+          { text: "停下静静观察", score: { I: 1, N: 2, P: 1 }, feedback: "你停下来，看见玻璃里的自己像站在另一片时光里。这一秒很短，却格外安静。" },
+          { text: "改走小路试试", score: { N: 1, P: 2, E: 1 }, feedback: "你拐进旁边的小巷。新路没有预告，却带给你一丝小小的兴奋。" }
         ]
       },
       {
@@ -210,13 +232,14 @@
         sceneId: "street",
         title: "饮品小票",
         objectLabel: "小票",
+        requires: ["e09"],
         speaker: "柜台",
-        prompt: "你看着小票和杯口升起的冷雾，忽然想给下午换个味道。你会选择？",
+        prompt: "你买了饮品，柜台递来小票。下午还长，你想给自己和海报都换一点味道。你会选？",
         hotspot: { id: "drink", x: 16, y: 388, w: 88, h: 116, kind: "cup", label: "小票" },
         choices: [
-          { text: "固定口味", score: { S: 2, J: 1, I: 1 }, feedback: "你选择熟悉的味道。它像一个小小的锚，把下午稳稳系住。" },
-          { text: "尝试新品", score: { N: 2, P: 1 }, feedback: "你点了从没试过的那杯。入口前的一点不确定，反而让你清醒起来。" },
-          { text: "邀请别人一起", score: { E: 2, F: 1, P: 1 }, feedback: "你把选择发给另一个人。饮品还没做好，分享的快乐已经先到了。" }
+          { text: "点固定老口味", score: { S: 2, J: 1, I: 1 }, feedback: "你选熟悉的味道。它像一个小锚，稳稳拴住你的下午。" },
+          { text: "尝试新品", score: { N: 2, P: 1 }, feedback: "你点了从没喝过的那一杯。入口前的一点不确定，反而让你更清醒。" },
+          { text: "邀请别人一起", score: { E: 2, F: 1, P: 1 }, feedback: "你把选择分享给别人。饮品还没好，分享的快乐已经先到。" }
         ]
       },
       {
@@ -224,13 +247,14 @@
         sceneId: "street",
         title: "被风翻开的地图",
         objectLabel: "地图",
+        requires: ["e09"],
         speaker: "地图",
-        prompt: "一张地图被风翻开，山与海之间有好几条线。你会怎样读它？",
+        prompt: "一张城市地图被风吹开，山与海之间画着好几条路线。你准备把哪种路放进《山海》？",
         hotspot: { id: "map", x: 204, y: 424, w: 166, h: 110, kind: "map", asset: "objMap", label: "山海" },
         choices: [
-          { text: "规划路线", score: { J: 2, S: 1, T: 1 }, feedback: "你把路线标清楚，像替未来点亮一串小灯。远方因此变得可抵达。" },
-          { text: "只定方向", score: { N: 2, P: 1 }, feedback: "你只记住大概的方向。剩下的路，让风和脚步一起商量。" },
-          { text: "跟随直觉", score: { F: 1, N: 1, P: 2 }, feedback: "你选了心里先亮起来的那条线。它没有理由，却有一种温柔的牵引。" }
+          { text: "仔细规划路线", score: { J: 2, S: 1, T: 1 }, feedback: "你把路线标得清清楚楚，像给未来点亮一串灯。远方从此变得可以到达。" },
+          { text: "只确定大方向", score: { N: 2, P: 1 }, feedback: "你只记住大概方向。剩下的路，交给风和脚步一起决定。" },
+          { text: "跟着直觉走", score: { F: 1, N: 1, P: 2 }, feedback: "你选心里最先亮起来的那条路。它没有理由，却有温柔的牵引力。" }
         ]
       },
       {
@@ -238,13 +262,14 @@
         sceneId: "street",
         title: "陌生人的问题",
         objectLabel: "陌生人",
+        requires: ["e09"],
         speaker: "路人",
-        prompt: "有人在路边向你问路，声音有点急。你会先怎么做？",
+        prompt: "路边有人向你问路，语气有些着急。你手里还攥着信和小票，会先怎么做？",
         hotspot: { id: "stranger", x: 22, y: 174, w: 84, h: 132, kind: "person", label: "路人" },
         choices: [
-          { text: "热情回应", score: { E: 2, F: 1 }, feedback: "你停下来，把方向讲得很清楚。对方道谢时，街口的风也变得柔和。" },
-          { text: "简短帮忙", score: { S: 1, F: 1, I: 1 }, feedback: "你指了最直接的路线，没有多说。帮助不一定热闹，但足够准确。" },
-          { text: "先判断真假", score: { T: 2, J: 1, S: 1 }, feedback: "你先看清周围，再给出回应。善意没有缺席，只是多了一层谨慎。" }
+          { text: "热情耐心回应", score: { E: 2, F: 1 }, feedback: "你停下来，把方向讲得很明白。对方道谢时，街口的风也变得温柔。" },
+          { text: "简单指明路线", score: { S: 1, F: 1, I: 1 }, feedback: "你指出最直接的路，不多废话。帮助不必热闹，但足够准确。" },
+          { text: "先判断再帮忙", score: { T: 2, J: 1, S: 1 }, feedback: "你先观察周围，再给出回答。善意没有缺席，只是多了一份谨慎。" }
         ]
       },
       {
@@ -253,12 +278,12 @@
         title: "灯光亮起",
         objectLabel: "灯光",
         speaker: "现场",
-        prompt: "傍晚的灯光亮起，所有人都看向同一个屏幕。你会先补上哪一块？",
+        prompt: "你带着素材回到现场。傍晚灯光亮起，《山海》被投到屏幕上。你会先补上哪一环？",
         hotspot: { id: "light", x: 92, y: 18, w: 206, h: 74, kind: "light", label: "灯光" },
         choices: [
-          { text: "上台说明", score: { E: 2, J: 1, T: 1 }, feedback: "你站到前面，把重点说出来。人群的视线聚拢，方向也随之清楚。" },
-          { text: "完善文本", score: { I: 1, S: 1, T: 1, J: 1 }, feedback: "你回到文档，把缺口一点点补齐。安静的修补，也能撑住一个现场。" },
-          { text: "调整气氛", score: { E: 1, F: 2, N: 1 }, feedback: "你先让大家笑了一下。紧绷松开后，灵感才有空间重新进来。" }
+          { text: "上台讲解说明", score: { E: 2, J: 1, T: 1 }, feedback: "你站到前面，把重点讲清楚。大家的目光聚拢，方向也随之明确。" },
+          { text: "完善文字内容", score: { I: 1, S: 1, T: 1, J: 1 }, feedback: "你回到文档，一点点补齐缺口。安静的修补，也能撑起整个现场。" },
+          { text: "调节现场气氛", score: { E: 1, F: 2, N: 1 }, feedback: "你先让大家轻松一笑。紧绷松开后，灵感才有空间回来。" }
         ]
       },
       {
@@ -266,13 +291,14 @@
         sceneId: "stage",
         title: "分歧出现",
         objectLabel: "圆桌",
+        requires: ["e13"],
         speaker: "讨论",
-        prompt: "两个方案同时出现，房间里开始有不同的声音。你会怎么处理？",
+        prompt: "关于海报结尾，两个方案同时出现。有人想更理性，有人想更柔软，你会怎么处理？",
         hotspot: { id: "split", x: 30, y: 388, w: 154, h: 108, kind: "meeting", label: "分歧" },
         choices: [
-          { text: "直接拍板", score: { E: 1, T: 2, J: 1 }, feedback: "你把判断说清楚，也承担选择的重量。犹豫停止后，大家终于能继续行动。" },
-          { text: "倾听协调", score: { F: 2, E: 1, P: 1 }, feedback: "你让每个人把担心说完。分歧没有立刻消失，但它开始变得可被理解。" },
-          { text: "提出新方案", score: { N: 2, T: 1, P: 1 }, feedback: "你把两个方向拆开又重组。新的方案像一扇临时打开的窗。" }
+          { text: "直接做出决定", score: { E: 1, T: 2, J: 1 }, feedback: "你清晰给出判断，也承担选择的责任。犹豫停止，大家终于能继续推进。" },
+          { text: "倾听协调各方", score: { F: 2, E: 1, P: 1 }, feedback: "你让每个人把顾虑说完。分歧没有立刻消失，但开始被理解。" },
+          { text: "提出新的方案", score: { N: 2, T: 1, P: 1 }, feedback: "你把两个方向拆开重组。新方案像一扇临时打开的窗。" }
         ]
       },
       {
@@ -280,13 +306,14 @@
         sceneId: "stage",
         title: "山海投影",
         objectLabel: "投影",
+        requires: ["e14"],
         speaker: "投影",
-        prompt: "墙上出现山海的投影。有人问：这到底在表达什么？你会怎么回答？",
+        prompt: "墙上投射出山与海。有人问：“这张海报到底想说什么？”你会怎么回答？",
         hotspot: { id: "projection", x: 32, y: 100, w: 328, h: 230, kind: "projection", label: "山海" },
         choices: [
-          { text: "解释结构", score: { T: 2, J: 1, S: 1 }, feedback: "你把层次、动线和结尾讲清楚。山海不再只是美，它也有了骨架。" },
-          { text: "讲述隐喻", score: { N: 2, F: 1, I: 1 }, feedback: "你说山是留下，海是出发。有人没有立刻点头，却安静地记住了这句话。" },
-          { text: "邀请大家补完", score: { E: 2, F: 1, P: 1 }, feedback: "你把问题交还给大家。投影里的山海多了很多人的脚印。" }
+          { text: "解释结构逻辑", score: { T: 2, J: 1, S: 1 }, feedback: "你把层次、流程和结尾讲清楚。山海不再只是好看，也有了清晰骨架。" },
+          { text: "讲述它的寓意", score: { N: 2, F: 1, I: 1 }, feedback: "你说山是留下来，海是走出去。有人没有立刻点头，却默默记住了这句话。" },
+          { text: "邀请大家补充", score: { E: 2, F: 1, P: 1 }, feedback: "你把问题交给大家。投影里的山海，多了很多人的故事。" }
         ]
       },
       {
@@ -294,13 +321,14 @@
         sceneId: "stage",
         title: "逆风时刻",
         objectLabel: "风",
+        requires: ["e15"],
         speaker: "风声",
-        prompt: "临近结束，一个小失误打乱了节奏。风从门缝里钻进来。你会选择？",
+        prompt: "快要展示时，设备和节奏同时出了小问题。风从门缝吹进来，你会选择？",
         hotspot: { id: "wind", x: 304, y: 330, w: 66, h: 116, kind: "wind", label: "逆风" },
         choices: [
-          { text: "坚持原计划", score: { J: 2, T: 1, S: 1 }, feedback: "你稳住原来的线，不让失误继续扩散。计划像一根被重新拉紧的绳。" },
-          { text: "顺势改路", score: { P: 2, N: 1, T: 1 }, feedback: "你把失误变成转场。风没有停，但你借着它换了一个方向。" },
-          { text: "先稳定情绪", score: { F: 2, E: 1, J: 1 }, feedback: "你先照看每个人的表情。心稳住以后，现场才重新有了呼吸。" }
+          { text: "坚持原定计划", score: { J: 2, T: 1, S: 1 }, feedback: "你稳住原有节奏，不让失误扩散。计划像一根被重新拉紧的绳子。" },
+          { text: "顺势调整方向", score: { P: 2, N: 1, T: 1 }, feedback: "你把失误变成转折。风没有停，但你借着它换了一条路。" },
+          { text: "先稳定大家情绪", score: { F: 2, E: 1, J: 1 }, feedback: "你先照顾每个人的心情。心稳住了，现场才重新找回呼吸。" }
         ]
       },
       {
@@ -309,12 +337,12 @@
         title: "坐到吧台前",
         objectLabel: "吧台",
         speaker: "深夜食堂",
-        prompt: "深夜食堂里只剩几盏小灯。你会坐在哪里？",
+        prompt: "展示结束后，你没有立刻回家。深夜食堂只剩几盏小灯，你把旧信放在吧台上，会坐在哪里？",
         hotspot: { id: "bar", x: 0, y: 276, w: 390, h: 174, kind: "bar", label: "吧台" },
         choices: [
-          { text: "熟悉的位置", score: { I: 1, S: 2, J: 1 }, feedback: "你坐到常坐的位置。身体先认出这里，心才慢慢放下包。" },
-          { text: "新的位置", score: { N: 1, P: 2, E: 1 }, feedback: "你换到从没坐过的角落。夜色从另一个角度靠近你。" },
-          { text: "和老板聊天", score: { E: 2, F: 1 }, feedback: "你和老板聊了两句。热汤还没端上来，灯下已经有了人的温度。" }
+          { text: "坐熟悉的位置", score: { I: 1, S: 2, J: 1 }, feedback: "你坐到常坐的地方。身体先认出这里，心才慢慢卸下疲惫。" },
+          { text: "坐没坐过的位置", score: { N: 1, P: 2, E: 1 }, feedback: "你换到新角落。夜色从另一个角度，轻轻靠近你。" },
+          { text: "和老板聊聊天", score: { E: 2, F: 1 }, feedback: "你和老板简单聊了几句。热汤还没上，灯下已经有了人的温度。" }
         ]
       },
       {
@@ -322,13 +350,14 @@
         sceneId: "diner",
         title: "一碗热汤",
         objectLabel: "热汤",
+        requires: ["e17"],
         speaker: "碗沿",
-        prompt: "一碗热汤放在你面前，白气慢慢升起来。你会怎样消化今天？",
+        prompt: "一碗热汤放在面前，白气缓缓升起。你想起白天那些选择，会怎么梳理它们？",
         hotspot: { id: "soup", x: 52, y: 286, w: 150, h: 106, kind: "soup", label: "热汤" },
         choices: [
-          { text: "慢慢感受", score: { I: 1, F: 2, P: 1 }, feedback: "你没有急着总结，只让热意停在掌心。今天先成为感受，再成为语言。" },
-          { text: "分析今天", score: { T: 2, S: 1, J: 1 }, feedback: "你在心里复盘选择、结果和原因。一天被你拆开，又重新合上。" },
-          { text: "写下结论", score: { J: 2, I: 1, T: 1 }, feedback: "你写下三句给明天的话。字不多，却像给自己留了一盏灯。" }
+          { text: "慢慢感受就好", score: { I: 1, F: 2, P: 1 }, feedback: "你不急着总结，只让暖意停在手心。今天先成为感受，再变成文字。" },
+          { text: "理性复盘今天", score: { T: 2, S: 1, J: 1 }, feedback: "你在心里回顾选择、结果与原因。一天被你拆开，又好好合上。" },
+          { text: "写下明日提醒", score: { J: 2, I: 1, T: 1 }, feedback: "你写下三句给明天的话。字不多，却像给自己留了一盏灯。" }
         ]
       },
       {
@@ -336,13 +365,14 @@
         sceneId: "diner",
         title: "山海边界",
         objectLabel: "窗外",
+        requires: ["e18"],
         speaker: "夜窗",
-        prompt: "窗外的雨痕像一张很小的山海图。你觉得自己更想走向哪里？",
+        prompt: "窗外的雨痕像一张小小的山海图。海报已经完成，你更想把今天的自己画向哪里？",
         hotspot: { id: "border", x: 190, y: 54, w: 188, h: 198, kind: "window", label: "山海" },
         choices: [
-          { text: "走向山", score: { I: 1, N: 2, J: 1 }, feedback: "你想走向山，向内、向高处、向更安静的答案。那里也许没有人催促。" },
-          { text: "走向海", score: { E: 1, N: 1, P: 2 }, feedback: "你想走向海，向外、向远处、向不断变化的风。那里没有固定的边界。" },
-          { text: "回头看城", score: { S: 2, F: 1, J: 1 }, feedback: "你回头看见灯火和来路。远方很好，但被你在意的人也在这里。" }
+          { text: "走向山", score: { I: 1, N: 2, J: 1 }, feedback: "你想走向山，向内、向高处、向更安静的答案。那里没有人催促。" },
+          { text: "走向海", score: { E: 1, N: 1, P: 2 }, feedback: "你想走向海，向外、向远方、向不断变化的风。那里没有固定边界。" },
+          { text: "回头看城市", score: { S: 2, F: 1, J: 1 }, feedback: "你回头望向灯火与来路。远方很美，但你在意的人都在这里。" }
         ]
       },
       {
@@ -350,14 +380,15 @@
         sceneId: "diner",
         title: "最后一封未寄出",
         objectLabel: "信",
+        requires: ["e18"],
         speaker: "信纸",
-        prompt: "夜深了，那封未寄出的信又回到你手里。今天结束前，你会怎么对它？",
-        hint: "长按信纸背面，也许还有一阵夜风。",
+        prompt: "夜深了，那封去年写给自己的信又回到你手中。今天结束前，你会怎么对待它？",
+        hint: "长按信纸背面，也许会吹来一阵夜风。",
         hotspot: { id: "letterNight", x: 212, y: 324, w: 156, h: 72, kind: "letter", asset: "objLetter", label: "未寄出" },
         choices: [
-          { text: "寄出", score: { E: 2, F: 1, J: 1 }, feedback: "你把信交给夜色。它不再只属于你，也终于开始奔向一个真实的回音。" },
-          { text: "封存", score: { I: 2, N: 1, P: 1 }, feedback: "你把信收好。不是所有心事都必须抵达别人，有些会在安静里继续发光。" },
-          { text: "重写给明天", score: { T: 1, N: 1, J: 2 }, feedback: "你换了一张纸，把今天留下的线索写给明天。未寄出的，也可以成为新的开始。" }
+          { text: "寄出", score: { E: 2, F: 1, J: 1 }, feedback: "你把信交给夜色。它不再只属于去年，也终于奔向一个真实的明天。" },
+          { text: "好好封存", score: { I: 2, N: 1, P: 1 }, feedback: "你把信小心收好。不是所有心事都要立刻交出去，有些会在安静里继续发光。" },
+          { text: "重写给明天", score: { T: 1, N: 1, J: 2 }, feedback: "你换一张纸，把今天的感悟写给明天。未寄出的心意，也可以成为新的开始。" }
         ]
       }
     ],
@@ -367,20 +398,20 @@
         eventId: "e02",
         title: "镜中回声",
         objectLabel: "镜子",
-        prompt: "镜面泛起一圈很轻的光。里面的你低声说：你不是答案，你是正在靠近答案的人。",
+        prompt: "镜面泛起微光，里面的你轻声说：你不是答案，你是正在靠近答案的人。",
         actionText: "收下这段回声",
         score: { I: 1, N: 2 },
-        feedback: "那句话没有改变任何事情，却让你和自己站得近了一点。"
+        feedback: "这句话没有改变任何事，却让你和自己靠得更近了一点。"
       },
       {
         id: "h2",
         eventId: "e20",
         title: "信纸背面",
         objectLabel: "未寄出",
-        prompt: "信纸背面藏着一行浅浅的字：如果还不能抵达，就先让夜风替你保管。",
+        prompt: "信纸背面藏着一行浅字：如果还不知道寄给谁，就先寄给明天。",
         actionText: "让它被夜风带走",
         score: { N: 1, F: 1, P: 2 },
-        feedback: "夜风从指缝里穿过去。它没有替你做决定，只把明天轻轻推近了一点。"
+        feedback: "夜风从指缝穿过。它没有替你做决定，只是轻轻把明天推近了一点。"
       }
     ],
     results: {

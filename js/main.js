@@ -31,8 +31,8 @@
   };
 
   var RAIN_RECT = { x: 60, y: 54, w: 150, h: 170 };
-  var WIND_RECT = { x: 270, y: 294, w: 112, h: 170 };
-  var STEAM_RECT = { x: 54, y: 214, w: 150, h: 156 };
+  var WIND_RECT = { x: 252, y: 276, w: 128, h: 192 };
+  var STEAM_RECT = { x: 38, y: 198, w: 178, h: 178 };
 
   function createAppState() {
     return {
@@ -166,48 +166,48 @@
       });
     }
 
-    for (var m = 0; m < 13; m += 1) {
+    for (var m = 0; m < 18; m += 1) {
       app.windGusts.push({
         baseX: seededRandom(m + 801) * (WIND_RECT.w + 80),
         y: seededRandom(m + 841) * WIND_RECT.h,
-        width: 32 + seededRandom(m + 881) * 52,
-        speed: 20 + seededRandom(m + 921) * 46,
-        amp: 3 + seededRandom(m + 961) * 8,
-        alpha: 0.16 + seededRandom(m + 1001) * 0.22,
+        width: 38 + seededRandom(m + 881) * 58,
+        speed: 22 + seededRandom(m + 921) * 52,
+        amp: 4 + seededRandom(m + 961) * 9,
+        alpha: 0.28 + seededRandom(m + 1001) * 0.28,
         phase: seededRandom(m + 1041) * Math.PI * 2
       });
     }
 
-    for (var n = 0; n < 8; n += 1) {
+    for (var n = 0; n < 12; n += 1) {
       app.windMotes.push({
         baseX: seededRandom(n + 1081) * (WIND_RECT.w + 70),
         y: seededRandom(n + 1121) * WIND_RECT.h,
         speed: 18 + seededRandom(n + 1161) * 34,
-        radius: 1 + seededRandom(n + 1201) * 1.4,
-        alpha: 0.12 + seededRandom(n + 1241) * 0.18,
+        radius: 1.2 + seededRandom(n + 1201) * 1.7,
+        alpha: 0.18 + seededRandom(n + 1241) * 0.24,
         phase: seededRandom(n + 1281) * Math.PI * 2
       });
     }
 
-    for (var p = 0; p < 9; p += 1) {
+    for (var p = 0; p < 13; p += 1) {
       app.steamWisps.push({
         x: seededRandom(p + 1321) * STEAM_RECT.w,
         baseY: seededRandom(p + 1361) * (STEAM_RECT.h + 60),
-        height: 42 + seededRandom(p + 1401) * 48,
-        speed: 12 + seededRandom(p + 1441) * 18,
-        sway: 7 + seededRandom(p + 1481) * 14,
-        alpha: 0.12 + seededRandom(p + 1521) * 0.18,
+        height: 46 + seededRandom(p + 1401) * 54,
+        speed: 12 + seededRandom(p + 1441) * 20,
+        sway: 8 + seededRandom(p + 1481) * 16,
+        alpha: 0.22 + seededRandom(p + 1521) * 0.24,
         phase: seededRandom(p + 1561) * Math.PI * 2
       });
     }
 
-    for (var q = 0; q < 7; q += 1) {
+    for (var q = 0; q < 10; q += 1) {
       app.steamPuffs.push({
         x: seededRandom(q + 1601) * STEAM_RECT.w,
         baseY: seededRandom(q + 1641) * (STEAM_RECT.h + 42),
         speed: 8 + seededRandom(q + 1681) * 16,
-        radius: 7 + seededRandom(q + 1721) * 12,
-        alpha: 0.06 + seededRandom(q + 1761) * 0.10,
+        radius: 8 + seededRandom(q + 1721) * 14,
+        alpha: 0.12 + seededRandom(q + 1761) * 0.16,
         phase: seededRandom(q + 1801) * Math.PI * 2
       });
     }
@@ -289,6 +289,27 @@
   function isSceneComplete(sceneIndex) {
     var events = eventsForSceneIndex(sceneIndex);
     return events.length > 0 && countCompletedInScene(sceneIndex) >= events.length;
+  }
+
+  function isEventUnlocked(event) {
+    var requires = event && event.requires ? event.requires : [];
+    for (var i = 0; i < requires.length; i += 1) {
+      if (!app.completedEvents[requires[i]]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function countUnlockedInScene(sceneIndex) {
+    var events = eventsForSceneIndex(sceneIndex);
+    var total = 0;
+    for (var i = 0; i < events.length; i += 1) {
+      if (!app.completedEvents[events[i].id] && isEventUnlocked(events[i])) {
+        total += 1;
+      }
+    }
+    return total;
   }
 
   function secretForEvent(event) {
@@ -584,6 +605,25 @@
     return true;
   }
 
+  function drawAssetContain(key, x, y, w, h, alpha) {
+    var asset = app.assets[key];
+    if (!asset || !asset.ready) {
+      return false;
+    }
+    var img = asset.image;
+    var scale = Math.min(w / img.width, h / img.height);
+    var dw = img.width * scale;
+    var dh = img.height * scale;
+    var dx = x + (w - dw) / 2;
+    var dy = y + (h - dh) / 2;
+    ctx.save();
+    ctx.globalAlpha = alpha == null ? 1 : alpha;
+    ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(img, dx, dy, dw, dh);
+    ctx.restore();
+    return true;
+  }
+
   function hexToRgb(hex) {
     var value = String(hex || "#4f9f8f").replace("#", "");
     if (value.length === 3) {
@@ -789,8 +829,6 @@
     roundRectPath(rect.x, rect.y, rect.w, rect.h, 8);
     ctx.clip();
     ctx.lineCap = "round";
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = "rgb(238, 255, 248)";
 
     for (var i = 0; i < app.windGusts.length; i += 1) {
       var gust = app.windGusts[i];
@@ -798,21 +836,32 @@
       var y = rect.y + gust.y + Math.sin(time * 1.6 + gust.phase) * gust.amp;
       var alpha = gust.alpha + Math.sin(time * 1.25 + gust.phase) * 0.06;
 
-      ctx.globalAlpha = Math.max(0.05, alpha);
       ctx.beginPath();
       ctx.moveTo(x, y);
       ctx.bezierCurveTo(x + gust.width * 0.32, y - gust.amp, x + gust.width * 0.62, y + gust.amp, x + gust.width, y);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "rgb(48, 111, 106)";
+      ctx.globalAlpha = Math.max(0.16, alpha * 0.7);
+      ctx.stroke();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "rgb(238, 255, 248)";
+      ctx.globalAlpha = Math.max(0.13, alpha);
       ctx.stroke();
     }
 
-    ctx.fillStyle = "rgb(255, 255, 255)";
     for (var j = 0; j < app.windMotes.length; j += 1) {
       var mote = app.windMotes[j];
       var mx = rect.x + ((mote.baseX + time * mote.speed) % (rect.w + 70)) - 35;
       var my = rect.y + mote.y + Math.sin(time * 2 + mote.phase) * 4;
       var mAlpha = mote.alpha + Math.sin(time * 1.7 + mote.phase) * 0.05;
 
-      ctx.globalAlpha = Math.max(0.04, mAlpha);
+      ctx.fillStyle = "rgb(48, 111, 106)";
+      ctx.globalAlpha = Math.max(0.12, mAlpha * 0.7);
+      ctx.beginPath();
+      ctx.arc(mx, my, mote.radius + 0.8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "rgb(255, 255, 255)";
+      ctx.globalAlpha = Math.max(0.10, mAlpha);
       ctx.beginPath();
       ctx.arc(mx, my, mote.radius, 0, Math.PI * 2);
       ctx.fill();
@@ -830,8 +879,6 @@
     roundRectPath(rect.x, rect.y, rect.w, rect.h, 8);
     ctx.clip();
     ctx.lineCap = "round";
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = "rgb(255, 248, 226)";
 
     for (var i = 0; i < app.steamWisps.length; i += 1) {
       var wisp = app.steamWisps[i];
@@ -841,14 +888,19 @@
       var sway = Math.sin(time * 1.4 + wisp.phase) * wisp.sway;
       var alpha = (1 - progress) * wisp.alpha + Math.sin(time * 1.3 + wisp.phase) * 0.03;
 
-      ctx.globalAlpha = Math.max(0.03, alpha);
       ctx.beginPath();
       ctx.moveTo(x, y);
       ctx.bezierCurveTo(x + sway, y - wisp.height * 0.32, x - sway * 0.5, y - wisp.height * 0.68, x + sway * 0.35, y - wisp.height);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "rgb(126, 112, 93)";
+      ctx.globalAlpha = Math.max(0.10, alpha * 0.48);
+      ctx.stroke();
+      ctx.lineWidth = 2.2;
+      ctx.strokeStyle = "rgb(255, 248, 226)";
+      ctx.globalAlpha = Math.max(0.12, alpha);
       ctx.stroke();
     }
 
-    ctx.fillStyle = "rgb(255, 250, 232)";
     for (var j = 0; j < app.steamPuffs.length; j += 1) {
       var puff = app.steamPuffs[j];
       var puffProgress = ((puff.baseY + time * puff.speed) % (rect.h + margin)) / (rect.h + margin);
@@ -856,7 +908,13 @@
       var py = rect.y + rect.h - puffProgress * (rect.h + margin) + 6;
       var pAlpha = (1 - puffProgress) * puff.alpha + Math.sin(time * 1.2 + puff.phase) * 0.02;
 
-      ctx.globalAlpha = Math.max(0.02, pAlpha);
+      ctx.fillStyle = "rgb(126, 112, 93)";
+      ctx.globalAlpha = Math.max(0.06, pAlpha * 0.45);
+      ctx.beginPath();
+      ctx.ellipse(px, py, puff.radius * 0.82, puff.radius * 1.1, 0.2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "rgb(255, 250, 232)";
+      ctx.globalAlpha = Math.max(0.08, pAlpha);
       ctx.beginPath();
       ctx.ellipse(px, py, puff.radius * 0.72, puff.radius, 0.2, 0, Math.PI * 2);
       ctx.fill();
@@ -1056,7 +1114,7 @@
     ctx.restore();
   }
 
-  function drawHotspot(event, active) {
+  function drawHotspot(event, active, locked) {
     var hotspot = event.hotspot;
     var secret = secretForEvent(event);
     var pulse = active ? Math.sin(app.time * 4) : 0;
@@ -1067,30 +1125,32 @@
     var h = hotspot.h + pad * 2;
 
     ctx.save();
-    ctx.globalAlpha = active ? 1 : 0.72;
-    fillRoundRect(x, y, w, h, 8, active ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.10)");
-    strokeRoundRect(x, y, w, h, 8, active ? "rgba(255,255,255,0.86)" : "rgba(255,255,255,0.56)", active ? 3 : 2);
-    strokeRoundRect(x + 3, y + 3, w - 6, h - 6, 8, active ? "rgba(47,139,134,0.48)" : "rgba(47,139,134,0.24)", 1);
+    ctx.globalAlpha = locked ? 0.58 : active ? 1 : 0.72;
+    fillRoundRect(x, y, w, h, 8, locked ? "rgba(49,91,88,0.10)" : active ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.10)");
+    ctx.setLineDash(locked ? [6, 6] : []);
+    strokeRoundRect(x, y, w, h, 8, locked ? "rgba(255,255,255,0.48)" : active ? "rgba(255,255,255,0.86)" : "rgba(255,255,255,0.56)", active ? 3 : 2);
+    ctx.setLineDash([]);
+    strokeRoundRect(x + 3, y + 3, w - 6, h - 6, 8, locked ? "rgba(49,91,88,0.20)" : active ? "rgba(47,139,134,0.48)" : "rgba(47,139,134,0.24)", 1);
     ctx.restore();
 
-    if (active) {
+    if (active || locked) {
       ctx.font = "600 13px sans-serif";
-      var label = event.objectLabel || hotspot.label;
-      var labelW = Math.max(72, Math.min(122, ctx.measureText(label).width + 28));
+      var label = locked ? "稍后 · " + (event.objectLabel || hotspot.label) : event.objectLabel || hotspot.label;
+      var labelW = Math.max(72, Math.min(150, ctx.measureText(label).width + 28));
       var labelX = Math.max(14, Math.min(W - labelW - 14, hotspot.x + hotspot.w / 2 - labelW / 2));
       var labelY = hotspot.y + hotspot.h + 12;
       if (labelY + 28 > 574) {
         labelY = Math.max(96, hotspot.y - 36);
       }
-      fillRoundRect(labelX, labelY, labelW, 28, 8, "rgba(255,255,255,0.88)");
-      strokeRoundRect(labelX, labelY, labelW, 28, 8, "rgba(47,139,134,0.18)", 1);
+      fillRoundRect(labelX, labelY, labelW, 28, 8, locked ? "rgba(255,255,255,0.66)" : "rgba(255,255,255,0.88)");
+      strokeRoundRect(labelX, labelY, labelW, 28, 8, locked ? "rgba(49,91,88,0.14)" : "rgba(47,139,134,0.18)", 1);
       ctx.font = "600 13px sans-serif";
-      ctx.fillStyle = "#315b58";
+      ctx.fillStyle = locked ? "#6a7b78" : "#315b58";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(label, labelX + labelW / 2, labelY + 14);
 
-      if (secret) {
+      if (secret && !locked) {
         var hintW = 66;
         var hintX = Math.max(14, Math.min(W - hintW - 14, labelX + labelW - 18));
         var hintY = Math.max(96, labelY - 32);
@@ -1163,17 +1223,17 @@
     ctx.fillStyle = "rgba(255,255,255,0.38)";
     ctx.fillRect(0, 0, W, H);
 
-    fillRoundRect(30, 96, 330, 176, 8, "rgba(255,255,255,0.78)");
-    ctx.font = "700 34px sans-serif";
+    fillRoundRect(24, 70, 342, 296, 8, "rgba(255,255,255,0.78)");
+    ctx.font = "700 32px sans-serif";
     ctx.fillStyle = "#245b56";
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
-    ctx.fillText(DATA.title, W / 2, 126);
-    drawWrapped(DATA.subtitle, 62, 180, 266, 24, "15px sans-serif", "#496966", 3);
+    ctx.fillText(DATA.title, W / 2, 96);
+    drawWrapped(DATA.subtitle, 48, 148, 294, 20, "14px sans-serif", "#496966", 10);
 
-    fillRoundRect(44, 318, 302, 188, 8, "rgba(255,255,255,0.70)");
-    drawWrapped(DATA.concept, 66, 346, 258, 26, "17px sans-serif", "#2d4542", 4);
-    drawWrapped("五幕，二十个选择，两段藏在长按里的回声。", 66, 452, 258, 22, "14px sans-serif", "#5d7471", 3);
+    fillRoundRect(44, 394, 302, 198, 8, "rgba(255,255,255,0.70)");
+    drawWrapped(DATA.concept, 66, 422, 258, 25, "17px sans-serif", "#2d4542", 3);
+    drawWrapped("山是稳定、秩序与留下；海是想象、变化与出发。你的选择，会把空白慢慢填上。", 66, 510, 258, 22, "14px sans-serif", "#5d7471", 3);
 
     addButton("start", 74, 688, 242, 54, "开始这一天", "primary", startGame);
     drawAudioButton();
@@ -1209,6 +1269,7 @@
     var scene = currentScene();
     var events = eventsForSceneIndex(app.sceneIntroIndex);
     var remaining = events.length - countCompletedInScene(app.sceneIntroIndex);
+    var available = countUnlockedInScene(app.sceneIntroIndex);
     var hasSecretHint = false;
     drawSceneBackground(scene);
     drawTopHud(scene);
@@ -1217,14 +1278,15 @@
     for (var i = 0; i < events.length; i += 1) {
       var event = events[i];
       var done = !!app.completedEvents[event.id];
+      var unlocked = done || isEventUnlocked(event);
       var eventSecret = secretForEvent(event);
-      if (!done && event.hint && eventSecret) {
+      if (!done && unlocked && event.hint && eventSecret) {
         hasSecretHint = true;
       }
-      drawHotspot(event, !done);
+      drawHotspot(event, !done && unlocked, !done && !unlocked);
       if (done) {
         drawCompletedMark(event);
-      } else {
+      } else if (unlocked) {
         addSceneHotspot(event);
       }
     }
@@ -1235,7 +1297,7 @@
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
     ctx.fillText(scene.name, 48, 610);
-    drawWrapped("本幕有 " + remaining + " 个未完成物件。你可以按自己的顺序点击，先点哪个，就先进入哪个事件。", 48, 648, 292, 22, "15px sans-serif", "#496966", 3);
+    drawWrapped("本幕还剩 " + remaining + " 个事件。现在亮起 " + available + " 个可探索物件；标着“稍后”的，要等前面的事情完成。", 48, 648, 292, 22, "15px sans-serif", "#496966", 3);
     if (hasSecretHint) {
       drawWrapped("提示：有些物件长按 650ms 会出现隐藏反应。", 48, 724, 292, 22, "14px sans-serif", "#d26262", 2);
     }
@@ -1377,7 +1439,7 @@
 
     fillRoundRect(24, 54, 342, 708, 8, "rgba(255,255,255,0.94)");
     strokeRoundRect(24, 54, 342, 708, 8, "rgba(47,139,134,0.20)", 1);
-    if (!drawAsset("badgeResult", 137, 78, 116, 116, 1)) {
+    if (!drawAssetContain(type, 137, 78, 116, 116, 1) && !drawAsset("badgeResult", 137, 78, 116, 116, 1)) {
       drawResultBadgeFallback();
     }
 
