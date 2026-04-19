@@ -373,30 +373,56 @@
 
   function drawCoverRainEffects() {
     if (!app.rainDrops || !app.rainDrops.length) return;
-    var rect = { x: 98, y: 114, w: 194, h: 128 };
-    var span = rect.h + 110;
+    var asset = app.assets.firstCover;
+    if (!asset || !asset.ready) return;
+    var imageRect = getPrimaryImageRect("firstCover");
+    var img = asset.image;
+    var panes = [
+      { x: 205, y: 168, w: 130, h: 142 },
+      { x: 355, y: 168, w: 126, h: 142 },
+      { x: 544, y: 168, w: 126, h: 142 },
+      { x: 690, y: 168, w: 130, h: 142 },
+      { x: 205, y: 334, w: 130, h: 72 },
+      { x: 355, y: 334, w: 126, h: 72 },
+      { x: 544, y: 334, w: 82, h: 62 },
+      { x: 690, y: 334, w: 58, h: 54 }
+    ];
+    var scaleX = imageRect.w / img.width;
+    var scaleY = imageRect.h / img.height;
     ctx.save();
-    roundRectPath(rect.x, rect.y, rect.w, rect.h, 4);
-    ctx.clip();
     ctx.lineCap = "round";
-    for (var i = 0; i < app.rainDrops.length; i += 1) {
-      var drop = app.rainDrops[i];
-      var y = rect.y + (((drop.y * 0.72) + app.time * (drop.speed * 0.72)) % span) - 55;
-      var x = rect.x + (((drop.x * 0.62) + i * 11) % (rect.w + 40)) - 20 + Math.sin(app.time * drop.sway + drop.phase) * 1.8;
-      var len = drop.len * 0.7;
-      var dx = len * 0.16;
-      ctx.beginPath();
-      ctx.strokeStyle = "rgba(94,136,182," + Math.min(0.42, drop.alpha * 0.58) + ")";
-      ctx.lineWidth = drop.width + 0.7;
-      ctx.moveTo(x, y);
-      ctx.lineTo(x - dx, y + len);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.strokeStyle = "rgba(228,244,255," + Math.min(0.82, drop.alpha + 0.06) + ")";
-      ctx.lineWidth = Math.max(0.9, drop.width);
-      ctx.moveTo(x, y);
-      ctx.lineTo(x - dx, y + len);
-      ctx.stroke();
+    for (var p = 0; p < panes.length; p += 1) {
+      var pane = panes[p];
+      var rect = {
+        x: imageRect.x + pane.x * scaleX,
+        y: imageRect.y + pane.y * scaleY,
+        w: pane.w * scaleX,
+        h: pane.h * scaleY
+      };
+      var span = rect.h + 70;
+      ctx.save();
+      roundRectPath(rect.x, rect.y, rect.w, rect.h, 2);
+      ctx.clip();
+      for (var i = 0; i < app.rainDrops.length; i += 2) {
+        var drop = app.rainDrops[(i + p * 7) % app.rainDrops.length];
+        var y = rect.y + (((drop.y * 0.54) + app.time * (drop.speed * 0.62)) % span) - 35;
+        var x = rect.x + (((drop.x * 0.42) + i * 8 + p * 19) % (rect.w + 24)) - 12 + Math.sin(app.time * drop.sway + drop.phase) * 1.4;
+        var len = Math.min(rect.h * 0.42, drop.len * 0.54);
+        var dx = len * 0.08;
+        ctx.beginPath();
+        ctx.strokeStyle = "rgba(70,108,158," + Math.min(0.46, drop.alpha * 0.58) + ")";
+        ctx.lineWidth = drop.width + 0.65;
+        ctx.moveTo(x, y);
+        ctx.lineTo(x - dx, y + len);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.strokeStyle = "rgba(218,238,255," + Math.min(0.76, drop.alpha + 0.02) + ")";
+        ctx.lineWidth = Math.max(0.85, drop.width);
+        ctx.moveTo(x, y);
+        ctx.lineTo(x - dx, y + len);
+        ctx.stroke();
+      }
+      ctx.restore();
     }
     ctx.restore();
   }
@@ -451,6 +477,22 @@
     ctx.globalAlpha = 0.96;
     ctx.drawImage(img, dx, dy, dw, dh);
     ctx.restore();
+  }
+
+  function getPrimaryImageRect(key) {
+    var asset = app.assets[key];
+    if (!asset || !asset.ready) return { x: 0, y: 0, w: W, h: H };
+    var img = asset.image;
+    var isFullSceneImage = key === "firstCover" || /^story\d+$/.test(key) || /^endImage\d+$/.test(key);
+    var scale = isFullSceneImage ? Math.min(W / img.width, 500 / img.height) : Math.max(W / img.width, H / img.height);
+    var dw = img.width * scale;
+    var dh = img.height * scale;
+    return {
+      x: (W - dw) / 2,
+      y: isFullSceneImage ? 24 : (H - dh) / 2,
+      w: dw,
+      h: dh
+    };
   }
 
   function drawSceneBackground(scene) {
