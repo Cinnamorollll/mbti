@@ -19,6 +19,40 @@
   var DPR = 1;
   var app = null;
   var PAIRS = { E: "EI", I: "EI", S: "SN", N: "SN", T: "TF", F: "TF", J: "JP", P: "JP" };
+  var CHOICE_UI = {
+    panelTop: "rgba(10,18,20,0.74)",
+    panelBottom: "rgba(16,34,36,0.62)",
+    panelStroke: "rgba(190,255,245,0.18)",
+    summaryText: "rgba(234,252,248,0.92)",
+    choiceCardTop: "rgba(255,255,255,0.12)",
+    choiceCardBottom: "rgba(255,255,255,0.07)",
+    choiceCardStroke: "rgba(190,255,245,0.16)",
+    choiceBadgeTop: "rgba(84,236,214,0.24)",
+    choiceBadgeBottom: "rgba(84,236,214,0.12)",
+    choiceBadgeText: "rgba(229,255,250,0.96)",
+    choiceText: "rgba(232,250,246,0.88)"
+  };
+  var RESULT_UI = {
+    veil: "rgba(0,0,0,0.18)",
+    panelTop: "rgba(8,16,18,0.78)",
+    panelBottom: "rgba(14,30,32,0.66)",
+    panelStroke: "rgba(190,255,245,0.16)",
+    typeText: "rgba(232,255,250,0.96)",
+    nameText: "rgba(232,255,250,0.86)",
+    bodyText: "rgba(226,248,244,0.84)",
+    sectionTop: "rgba(255,255,255,0.10)",
+    sectionBottom: "rgba(255,255,255,0.06)",
+    sectionText: "rgba(226,248,244,0.82)",
+    warmAccent: "rgba(255,152,162,0.92)",
+    coolAccent: "rgba(84,236,214,0.94)",
+    sectionWarmStroke: "rgba(255,152,162,0.26)",
+    sectionCoolStroke: "rgba(84,236,214,0.22)",
+    sectionNeutralStroke: "rgba(190,255,245,0.14)",
+    barBg: "rgba(255,255,255,0.10)",
+    barFill: "rgba(84,236,214,0.92)",
+    barText: "rgba(226,248,244,0.82)",
+    barPairText: "rgba(255,255,255,0.92)"
+  };
 
   function createAppState() {
     return {
@@ -281,6 +315,13 @@
     ctx.stroke();
   }
 
+  function verticalGradient(y, h, top, bottom) {
+    var g = ctx.createLinearGradient(0, y, 0, y + h);
+    g.addColorStop(0, top);
+    g.addColorStop(1, bottom);
+    return g;
+  }
+
   function hexToRgb(hex) {
     var value = String(hex || "#6aa3a0").replace("#", "");
     if (value.length === 3) value = value.split("").map(function (ch) { return ch + ch; }).join("");
@@ -520,6 +561,7 @@
 
   function drawCover() {
     drawBackgroundImage("firstCover", "#6f9d91");
+    drawCoverRainEffects();
     var titleY = 74;
     ctx.save();
     ctx.shadowColor = "rgba(0,0,0,0.28)";
@@ -754,24 +796,24 @@
     var contentHeight = layout.layouts.reduce(function (sum, item) { return sum + item.h + 8; }, 0) - 8;
     var panelHeight = Math.min(404, Math.max(306, contentHeight + summaryHeight + 54));
     var panelY = H - panelHeight - 14;
-    fillRoundRect(20, panelY, 350, panelHeight, 8, "rgba(255,255,255,0.90)");
-    strokeRoundRect(20, panelY, 350, panelHeight, 8, "rgba(47,139,134,0.18)", 1);
-    drawLines(summaryLines, 38, panelY + 18, 17, "13px sans-serif", "#315b58");
+    fillRoundRect(20, panelY, 350, panelHeight, 8, verticalGradient(panelY, panelHeight, CHOICE_UI.panelTop, CHOICE_UI.panelBottom));
+    strokeRoundRect(20, panelY, 350, panelHeight, 8, CHOICE_UI.panelStroke, 1);
+    drawLines(summaryLines, 38, panelY + 18, 17, "13px sans-serif", CHOICE_UI.summaryText);
     var y = panelY + 20 + summaryHeight + 12;
     for (var i = 0; i < layout.layouts.length; i += 1) {
       (function (item, index) {
         var choice = item.choice;
         var x = 36;
         var h = item.h;
-        fillRoundRect(x, y, 318, h, 8, "rgba(255,255,255,0.92)");
-        strokeRoundRect(x, y, 318, h, 8, "rgba(47,139,134,0.18)", 1);
-        fillRoundRect(x + 10, y + 9, 24, 24, 8, "rgba(47,139,134,0.13)");
+        fillRoundRect(x, y, 318, h, 8, verticalGradient(y, h, CHOICE_UI.choiceCardTop, CHOICE_UI.choiceCardBottom));
+        strokeRoundRect(x, y, 318, h, 8, CHOICE_UI.choiceCardStroke, 1);
+        fillRoundRect(x + 10, y + 9, 24, 24, 8, verticalGradient(y + 9, 24, CHOICE_UI.choiceBadgeTop, CHOICE_UI.choiceBadgeBottom));
         ctx.font = "700 13px sans-serif";
-        ctx.fillStyle = "#2f615d";
+        ctx.fillStyle = CHOICE_UI.choiceBadgeText;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(choice.label, x + 22, y + 21);
-        drawLines(item.lines, x + 44, y + 9, layout.lineHeight, layout.font, "#315b58");
+        drawLines(item.lines, x + 44, y + 9, layout.lineHeight, layout.font, CHOICE_UI.choiceText);
         app.buttons.push({ id: "choice-" + index, kind: "button", x: x, y: y, w: 318, h: h, onTap: function () { chooseOption(choice); } });
         y += h + 8;
       })(layout.layouts[i], i);
@@ -782,53 +824,59 @@
   function drawDimensionBar(x, y, left, right, pair) {
     var total = app.scores[left] + app.scores[right];
     var ratio = total ? app.scores[left] / total : 0.5;
-    fillRoundRect(x, y, 260, 12, 6, "rgba(47,139,134,0.12)");
-    fillRoundRect(x, y, Math.max(8, 260 * ratio), 12, 6, "#2f8b86");
+    fillRoundRect(x, y, 260, 12, 6, RESULT_UI.barBg);
+    fillRoundRect(x, y, Math.max(8, 260 * ratio), 12, 6, RESULT_UI.barFill);
     ctx.font = "600 12px sans-serif";
-    ctx.fillStyle = "#496966";
+    ctx.fillStyle = RESULT_UI.barText;
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
     ctx.fillText(left + " " + app.scores[left], x, y - 12);
     ctx.textAlign = "right";
     ctx.fillText(app.scores[right] + " " + right, x + 260, y - 12);
     ctx.textAlign = "center";
-    ctx.fillStyle = "#ffffff";
+    ctx.fillStyle = RESULT_UI.barPairText;
     ctx.fillText(pair, x + 130, y + 6);
   }
 
   function drawResult() {
     var scene = currentScene();
     drawSceneBackground(scene);
+    ctx.fillStyle = RESULT_UI.veil;
+    ctx.fillRect(0, 0, W, H);
     var type = resultType();
     var result = DATA.results[type] || DATA.results.INFP;
     var story = DATA.storyEndings[app.resultEndingKey] || DATA.storyEndings.end3;
-    fillRoundRect(24, 50, 342, 742, 8, "rgba(255,255,255,0.94)");
-    strokeRoundRect(24, 50, 342, 742, 8, "rgba(47,139,134,0.20)", 1);
+    fillRoundRect(24, 50, 342, 742, 8, verticalGradient(50, 742, RESULT_UI.panelTop, RESULT_UI.panelBottom));
+    strokeRoundRect(24, 50, 342, 742, 8, RESULT_UI.panelStroke, 1);
     if (!drawAssetContain(type, 137, 72, 116, 116, 1)) drawAssetContain("badgeResult", 137, 72, 116, 116, 1);
     ctx.font = "700 42px sans-serif";
-    ctx.fillStyle = "#245b56";
+    ctx.fillStyle = RESULT_UI.typeText;
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
     ctx.fillText(type, W / 2, 184);
     ctx.font = "700 21px sans-serif";
+    ctx.fillStyle = RESULT_UI.nameText;
     ctx.fillText(result.name, W / 2, 232);
-    drawLines(wrapLines(result.description, 294, "13px sans-serif"), 48, 270, 18, "13px sans-serif", "#385a56");
-    fillRoundRect(48, 344, 294, 72, 8, "rgba(210,98,98,0.08)");
+    drawLines(wrapLines(result.description, 294, "13px sans-serif"), 48, 270, 18, "13px sans-serif", RESULT_UI.bodyText);
+    fillRoundRect(48, 344, 294, 72, 8, verticalGradient(344, 72, RESULT_UI.sectionTop, RESULT_UI.sectionBottom));
+    strokeRoundRect(48, 344, 294, 72, 8, RESULT_UI.sectionWarmStroke, 1);
     ctx.font = "700 14px sans-serif";
-    ctx.fillStyle = "#8c4c51";
+    ctx.fillStyle = RESULT_UI.warmAccent;
     ctx.textAlign = "left";
     ctx.fillText("\u5267\u60c5\u7ed3\u5c40 \u00b7 " + story.shortName, 66, 362);
-    drawLines(wrapLines(story.description, 258, "12px sans-serif"), 66, 388, 16, "12px sans-serif", "#5d7471");
-    fillRoundRect(48, 430, 294, 92, 8, "rgba(47,139,134,0.08)");
+    drawLines(wrapLines(story.description, 258, "12px sans-serif"), 66, 388, 16, "12px sans-serif", RESULT_UI.sectionText);
+    fillRoundRect(48, 430, 294, 92, 8, verticalGradient(430, 92, RESULT_UI.sectionTop, RESULT_UI.sectionBottom));
+    strokeRoundRect(48, 430, 294, 92, 8, RESULT_UI.sectionCoolStroke, 1);
     ctx.font = "700 14px sans-serif";
-    ctx.fillStyle = "#245b56";
+    ctx.fillStyle = RESULT_UI.coolAccent;
     ctx.fillText("\u9002\u5408\u7684\u5b66\u4e60 / \u5de5\u4f5c\u65b9\u5f0f", 66, 448);
-    drawLines(wrapLines(result.work, 258, "12px sans-serif"), 66, 474, 16, "12px sans-serif", "#496966");
-    fillRoundRect(48, 536, 294, 92, 8, "rgba(250,113,103,0.08)");
+    drawLines(wrapLines(result.work, 258, "12px sans-serif"), 66, 474, 16, "12px sans-serif", RESULT_UI.sectionText);
+    fillRoundRect(48, 536, 294, 92, 8, verticalGradient(536, 92, RESULT_UI.sectionTop, RESULT_UI.sectionBottom));
+    strokeRoundRect(48, 536, 294, 92, 8, RESULT_UI.sectionWarmStroke, 1);
     ctx.font = "700 14px sans-serif";
-    ctx.fillStyle = "#8c4c51";
+    ctx.fillStyle = RESULT_UI.warmAccent;
     ctx.fillText("\u4eca\u5929\u8fd9\u4e00\u5929", 66, 554);
-    drawLines(wrapLines(result.summary, 258, "12px sans-serif"), 66, 580, 16, "12px sans-serif", "#5d7471");
+    drawLines(wrapLines(result.summary, 258, "12px sans-serif"), 66, 580, 16, "12px sans-serif", RESULT_UI.sectionText);
     drawDimensionBar(65, 656, "E", "I", "E / I");
     drawDimensionBar(65, 686, "S", "N", "S / N");
     drawDimensionBar(65, 716, "T", "F", "T / F");
