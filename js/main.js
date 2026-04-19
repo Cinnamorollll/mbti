@@ -665,7 +665,7 @@
     ctx.fillStyle = "rgba(0,0,0,0.72)";
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
-    ctx.fillText("\u672c\u4f5c\u54c1\u4e3a\u539f\u521b\u50cf\u7d20\u65b9\u5757\u98ce\u683c\uff0c\u4e0e\u300a\u6211\u7684\u4e16\u754c\u300b\u53ca\u76f8\u5173\u54c1\u724c\u65e0\u5173\u8054\u3002", W / 2, 810);
+    ctx.fillText("\u672c\u4f5c\u54c1\u91c7\u7528\u50cf\u7d20\u65b9\u5757\u98ce\u683c\u5236\u4f5c\uff0c\u4e0e\u300a\u6211\u7684\u4e16\u754c\u300b\u53ca\u76f8\u5173\u54c1\u724c\u65e0\u5173\u8054\u3002", W / 2, 810);
     ctx.restore();
     drawAudioButton();
   }
