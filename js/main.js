@@ -660,6 +660,13 @@
     ctx.fillText("\u8c37\u96e8-\u672a\u5bc4\u4fe1", W / 2, titleY);
     ctx.restore();
     addButton("cover-start", 74, 746, 242, 54, "\u5f00\u59cb\u6e38\u620f", "primary", enterPrologue);
+    ctx.save();
+    ctx.font = "500 10px sans-serif";
+    ctx.fillStyle = "rgba(0,0,0,0.72)";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    ctx.fillText("\u672c\u4f5c\u54c1\u4e3a\u539f\u521b\u50cf\u7d20\u65b9\u5757\u98ce\u683c\uff0c\u4e0e\u300a\u6211\u7684\u4e16\u754c\u300b\u53ca\u76f8\u5173\u54c1\u724c\u65e0\u5173\u8054\u3002", W / 2, 810);
+    ctx.restore();
     drawAudioButton();
   }
 
@@ -923,9 +930,9 @@
     ctx.fillStyle = RESULT_UI.barText;
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
-    ctx.fillText(left + " " + app.scores[left], x, y - 12);
+    ctx.fillText(left, x, y - 12);
     ctx.textAlign = "right";
-    ctx.fillText(app.scores[right] + " " + right, x + 260, y - 12);
+    ctx.fillText(right, x + 260, y - 12);
     ctx.textAlign = "center";
     ctx.fillStyle = RESULT_UI.barPairText;
     ctx.fillText(pair, x + 130, y + 6);

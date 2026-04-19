@@ -584,7 +584,8 @@
           "text": "直接赶往公司，用忙碌填满思绪",
           "score": {
             "J": 2,
-            "T": 1
+            "T": 1,
+            "S": 1
           },
           "nextSceneId": "s02a",
           "feedback": "s02a",
@@ -595,7 +596,8 @@
           "text": "走老街慢慢走，想认真感受这个清晨",
           "score": {
             "P": 2,
-            "S": 1
+            "N": 1,
+            "I": 1
           },
           "nextSceneId": "s02b",
           "feedback": "s02b",
@@ -648,6 +650,7 @@
           "text": "抱起小猫，擦干后联系救助",
           "score": {
             "F": 2,
+            "J": 1,
             "N": 1
           },
           "nextSceneId": "s03",
@@ -658,8 +661,9 @@
           "label": "B",
           "text": "给它一点食物，摸了摸头，继续赶路",
           "score": {
-            "S": 2,
-            "T": 1
+            "T": 2,
+            "S": 1,
+            "P": 1
           },
           "nextSceneId": "s03",
           "feedback": "s03",
@@ -670,7 +674,7 @@
           "text": "拍照发到邻居群求助，然后离开",
           "score": {
             "E": 2,
-            "J": 1
+            "N": 1
           },
           "nextSceneId": "s03",
           "feedback": "s03",
@@ -681,7 +685,7 @@
           "text": "走开后又折返，买了幼猫粮放在它身边",
           "score": {
             "P": 2,
-            "N": 1
+            "S": 1
           },
           "nextSceneId": "s03",
           "feedback": "s03",
@@ -712,6 +716,7 @@
           "text": "抱起小猫，擦干后托人照看",
           "score": {
             "F": 2,
+            "J": 1,
             "N": 1
           },
           "nextSceneId": "s03",
@@ -722,8 +727,9 @@
           "label": "B",
           "text": "给它一点零食，陪它片刻再离开",
           "score": {
-            "S": 2,
-            "T": 1
+            "T": 2,
+            "S": 1,
+            "P": 1
           },
           "nextSceneId": "s03",
           "feedback": "s03",
@@ -734,7 +740,7 @@
           "text": "拍照发到群里求助，继续前行",
           "score": {
             "E": 2,
-            "J": 1
+            "N": 1
           },
           "nextSceneId": "s03",
           "feedback": "s03",
@@ -745,7 +751,7 @@
           "text": "走开后又折返，买了幼猫粮放在它身边",
           "score": {
             "P": 2,
-            "N": 1
+            "S": 1
           },
           "nextSceneId": "s03",
           "feedback": "s03",
@@ -776,6 +782,7 @@
           "text": "放下饮品，抱起小猫擦干安置",
           "score": {
             "F": 2,
+            "J": 1,
             "N": 1
           },
           "nextSceneId": "s03",
@@ -786,8 +793,9 @@
           "label": "B",
           "text": "分给它一点零食，蹲下来陪一会儿",
           "score": {
-            "S": 2,
-            "T": 1
+            "T": 2,
+            "S": 1,
+            "P": 1
           },
           "nextSceneId": "s03",
           "feedback": "s03",
@@ -798,7 +806,7 @@
           "text": "拍照发到群里求助，然后离开",
           "score": {
             "E": 2,
-            "J": 1
+            "N": 1
           },
           "nextSceneId": "s03",
           "feedback": "s03",
@@ -809,7 +817,7 @@
           "text": "走开后又折返，买了幼猫粮放在它身边",
           "score": {
             "P": 2,
-            "N": 1
+            "S": 1
           },
           "nextSceneId": "s03",
           "feedback": "s03",
@@ -840,6 +848,7 @@
           "text": "抱起小猫，擦干后托人照看",
           "score": {
             "F": 2,
+            "J": 1,
             "N": 1
           },
           "nextSceneId": "s03",
@@ -850,8 +859,9 @@
           "label": "B",
           "text": "给它一点食物，摸了摸头再离开",
           "score": {
-            "S": 2,
-            "T": 1
+            "T": 2,
+            "S": 1,
+            "P": 1
           },
           "nextSceneId": "s03",
           "feedback": "s03",
@@ -862,7 +872,7 @@
           "text": "拍照发到群里求助，继续前行",
           "score": {
             "E": 2,
-            "J": 1
+            "N": 1
           },
           "nextSceneId": "s03",
           "feedback": "s03",
@@ -873,7 +883,7 @@
           "text": "走开后又折返，买了幼猫粮放在它身边",
           "score": {
             "P": 2,
-            "N": 1
+            "S": 1
           },
           "nextSceneId": "s03",
           "feedback": "s03",
@@ -891,20 +901,21 @@
       "hotspot": {
         "id": "hotspot-s03",
         "kind": "story",
-      "asset": "story03",
-      "label": "",
-      "x": 112,
-      "y": 262,
-      "w": 76,
-      "h": 46
-    },
+        "asset": "story03",
+        "label": "",
+        "x": 112,
+        "y": 262,
+        "w": 76,
+        "h": 46
+      },
       "choices": [
         {
           "label": "A",
           "text": "把信放到一边，告诉自己午休再面对",
           "score": {
             "J": 2,
-            "T": 1
+            "T": 1,
+            "S": 1
           },
           "nextSceneId": "s04",
           "feedback": "s04",
@@ -914,7 +925,8 @@
           "label": "B",
           "text": "让信留在桌角，继续工作",
           "score": {
-            "I": 2,
+            "N": 2,
+            "T": 1,
             "P": 1
           },
           "nextSceneId": "s04",
@@ -936,7 +948,7 @@
           "label": "D",
           "text": "拿着信去茶水间，默读一遍再收好",
           "score": {
-            "F": 2,
+            "I": 2,
             "N": 1
           },
           "nextSceneId": "s04",
@@ -968,7 +980,8 @@
           "text": "点两杯，都留给自己",
           "score": {
             "P": 2,
-            "I": 1
+            "I": 1,
+            "F": 1
           },
           "nextSceneId": "s05",
           "feedback": "s05",
@@ -978,8 +991,9 @@
           "label": "B",
           "text": "只点一杯，压下多余的情绪",
           "score": {
-            "J": 2,
-            "T": 1
+            "T": 2,
+            "J": 1,
+            "S": 1
           },
           "nextSceneId": "s05",
           "feedback": "s05",
@@ -1032,7 +1046,8 @@
           "text": "回复 “有空”，并提起当年的约定",
           "score": {
             "E": 2,
-            "N": 1
+            "N": 1,
+            "F": 1
           },
           "nextSceneId": "s06",
           "feedback": "s06",
@@ -1046,7 +1061,8 @@
           "text": "回复 “有空”，只聊近况",
           "score": {
             "S": 2,
-            "F": 1
+            "F": 1,
+            "J": 1
           },
           "nextSceneId": "s07",
           "feedback": "s07",
@@ -1108,7 +1124,8 @@
           "text": "帮忙完成核心部分，其余交还对方",
           "score": {
             "T": 2,
-            "J": 1
+            "J": 1,
+            "S": 1
           },
           "nextSceneId": "s10",
           "feedback": "s10",
@@ -1119,7 +1136,8 @@
           "text": "全部接过来，一个人做完",
           "score": {
             "J": 2,
-            "I": 1
+            "I": 1,
+            "T": 1
           },
           "nextSceneId": "s11",
           "feedback": "s11",
@@ -1129,8 +1147,8 @@
           "label": "C",
           "text": "和同事分工，一起完成",
           "score": {
-            "N": 2,
-            "P": 1
+            "E": 2,
+            "S": 1
           },
           "nextSceneId": "s12",
           "feedback": "s12",
@@ -1141,7 +1159,7 @@
           "text": "说明情况，礼貌拒绝",
           "score": {
             "T": 2,
-            "N": 1
+            "J": 1
           },
           "nextSceneId": "s13",
           "feedback": "s13",
@@ -1172,7 +1190,8 @@
           "text": "协助核心，不全盘接手",
           "score": {
             "T": 2,
-            "J": 1
+            "J": 1,
+            "S": 1
           },
           "nextSceneId": "s10",
           "feedback": "s10",
@@ -1183,7 +1202,8 @@
           "text": "独自完成全部",
           "score": {
             "J": 2,
-            "I": 1
+            "I": 1,
+            "T": 1
           },
           "nextSceneId": "s11",
           "feedback": "s11",
@@ -1193,8 +1213,8 @@
           "label": "C",
           "text": "分工协作",
           "score": {
-            "N": 2,
-            "P": 1
+            "E": 2,
+            "S": 1
           },
           "nextSceneId": "s12",
           "feedback": "s12",
@@ -1205,7 +1225,7 @@
           "text": "婉拒帮忙",
           "score": {
             "T": 2,
-            "N": 1
+            "J": 1
           },
           "nextSceneId": "s13",
           "feedback": "s13",
@@ -1236,7 +1256,8 @@
           "text": "协助核心，不全盘接手",
           "score": {
             "T": 2,
-            "J": 1
+            "J": 1,
+            "S": 1
           },
           "nextSceneId": "s10",
           "feedback": "s10",
@@ -1247,7 +1268,8 @@
           "text": "独自完成全部",
           "score": {
             "J": 2,
-            "I": 1
+            "I": 1,
+            "T": 1
           },
           "nextSceneId": "s11",
           "feedback": "s11",
@@ -1257,8 +1279,8 @@
           "label": "C",
           "text": "分工协作",
           "score": {
-            "N": 2,
-            "P": 1
+            "E": 2,
+            "S": 1
           },
           "nextSceneId": "s12",
           "feedback": "s12",
@@ -1269,7 +1291,7 @@
           "text": "婉拒帮忙",
           "score": {
             "T": 2,
-            "N": 1
+            "J": 1
           },
           "nextSceneId": "s13",
           "feedback": "s13",
@@ -1300,7 +1322,8 @@
           "text": "协助核心，不全盘接手",
           "score": {
             "T": 2,
-            "J": 1
+            "J": 1,
+            "S": 1
           },
           "nextSceneId": "s10",
           "feedback": "s10",
@@ -1311,7 +1334,8 @@
           "text": "独自完成全部",
           "score": {
             "J": 2,
-            "I": 1
+            "I": 1,
+            "T": 1
           },
           "nextSceneId": "s11",
           "feedback": "s11",
@@ -1321,8 +1345,8 @@
           "label": "C",
           "text": "分工协作",
           "score": {
-            "N": 2,
-            "P": 1
+            "E": 2,
+            "S": 1
           },
           "nextSceneId": "s12",
           "feedback": "s12",
@@ -1333,7 +1357,7 @@
           "text": "婉拒帮忙",
           "score": {
             "T": 2,
-            "N": 1
+            "J": 1
           },
           "nextSceneId": "s13",
           "feedback": "s13",
@@ -1364,7 +1388,8 @@
           "text": "去参加团建",
           "score": {
             "E": 2,
-            "T": 1
+            "F": 1,
+            "P": 1
           },
           "nextSceneId": "s14",
           "feedback": "s14",
@@ -1374,8 +1399,9 @@
           "label": "B",
           "text": "绕路去看看那只小猫",
           "score": {
-            "F": 2,
-            "S": 1
+            "N": 2,
+            "F": 1,
+            "J": 1
           },
           "nextSceneId": "s15",
           "feedback": "s15",
@@ -1386,7 +1412,7 @@
           "text": "直接回家",
           "score": {
             "I": 2,
-            "J": 1
+            "S": 1
           },
           "nextSceneId": "s16",
           "feedback": "s16",
@@ -1397,7 +1423,7 @@
           "text": "去江边慢跑",
           "score": {
             "P": 2,
-            "S": 1
+            "N": 1
           },
           "nextSceneId": "s17",
           "feedback": "s17",
@@ -1428,7 +1454,8 @@
           "text": "去参加团建",
           "score": {
             "E": 2,
-            "T": 1
+            "F": 1,
+            "P": 1
           },
           "nextSceneId": "s14",
           "feedback": "s14",
@@ -1438,8 +1465,9 @@
           "label": "B",
           "text": "看看小猫",
           "score": {
-            "F": 2,
-            "S": 1
+            "N": 2,
+            "F": 1,
+            "J": 1
           },
           "nextSceneId": "s15",
           "feedback": "s15",
@@ -1450,7 +1478,7 @@
           "text": "直接回家",
           "score": {
             "I": 2,
-            "J": 1
+            "S": 1
           },
           "nextSceneId": "s16",
           "feedback": "s16",
@@ -1461,7 +1489,7 @@
           "text": "江边慢跑",
           "score": {
             "P": 2,
-            "S": 1
+            "N": 1
           },
           "nextSceneId": "s17",
           "feedback": "s17",
@@ -1492,7 +1520,8 @@
           "text": "去参加团建",
           "score": {
             "E": 2,
-            "T": 1
+            "F": 1,
+            "P": 1
           },
           "nextSceneId": "s14",
           "feedback": "s14",
@@ -1502,8 +1531,9 @@
           "label": "B",
           "text": "看看小猫",
           "score": {
-            "F": 2,
-            "S": 1
+            "N": 2,
+            "F": 1,
+            "J": 1
           },
           "nextSceneId": "s15",
           "feedback": "s15",
@@ -1514,7 +1544,7 @@
           "text": "直接回家",
           "score": {
             "I": 2,
-            "J": 1
+            "S": 1
           },
           "nextSceneId": "s16",
           "feedback": "s16",
@@ -1525,7 +1555,7 @@
           "text": "江边慢跑",
           "score": {
             "P": 2,
-            "S": 1
+            "N": 1
           },
           "nextSceneId": "s17",
           "feedback": "s17",
@@ -1556,7 +1586,8 @@
           "text": "去参加团建",
           "score": {
             "E": 2,
-            "T": 1
+            "F": 1,
+            "P": 1
           },
           "nextSceneId": "s14",
           "feedback": "s14",
@@ -1566,8 +1597,9 @@
           "label": "B",
           "text": "看看小猫",
           "score": {
-            "F": 2,
-            "S": 1
+            "N": 2,
+            "F": 1,
+            "J": 1
           },
           "nextSceneId": "s15",
           "feedback": "s15",
@@ -1578,7 +1610,7 @@
           "text": "直接回家",
           "score": {
             "I": 2,
-            "J": 1
+            "S": 1
           },
           "nextSceneId": "s16",
           "feedback": "s16",
@@ -1589,7 +1621,7 @@
           "text": "江边慢跑",
           "score": {
             "P": 2,
-            "S": 1
+            "N": 1
           },
           "nextSceneId": "s17",
           "feedback": "s17",
@@ -1611,7 +1643,8 @@
           "text": "坚持现在就走",
           "score": {
             "E": 2,
-            "P": 1
+            "P": 1,
+            "N": 1
           },
           "nextSceneId": "end1",
           "feedback": "end1",
@@ -1622,7 +1655,8 @@
           "text": "重新约定一个时间",
           "score": {
             "J": 2,
-            "F": 1
+            "F": 1,
+            "S": 1
           },
           "nextSceneId": "s22",
           "feedback": "s22",
@@ -1666,7 +1700,8 @@
           "text": "提起当年的旅行约定",
           "score": {
             "E": 2,
-            "N": 1
+            "N": 1,
+            "F": 1
           },
           "nextSceneId": "s22",
           "feedback": "s22",
@@ -1677,6 +1712,7 @@
           "text": "只说下次再约",
           "score": {
             "F": 2,
+            "J": 1,
             "S": 1
           },
           "nextSceneId": "end3",
@@ -1688,7 +1724,7 @@
           "text": "默默告别，不再多言",
           "score": {
             "I": 2,
-            "T": 1
+            "F": 1
           },
           "nextSceneId": "end2",
           "feedback": "end2",
@@ -1699,7 +1735,7 @@
           "text": "把那封信交给对方",
           "score": {
             "F": 2,
-            "E": 1
+            "I": 1
           },
           "nextSceneId": "end4",
           "feedback": "end4",
@@ -1721,7 +1757,8 @@
           "text": "解释上次婉拒，并主动邀约旅行",
           "score": {
             "E": 2,
-            "F": 1
+            "F": 1,
+            "J": 1
           },
           "nextSceneId": "s22",
           "feedback": "s22",
@@ -1732,7 +1769,8 @@
           "text": "轻描淡写说只是出来走走",
           "score": {
             "S": 2,
-            "I": 1
+            "I": 1,
+            "P": 1
           },
           "nextSceneId": "end1",
           "feedback": "end1",
@@ -1753,8 +1791,8 @@
           "label": "D",
           "text": "半开玩笑化解尴尬",
           "score": {
-            "P": 2,
-            "E": 1
+            "E": 2,
+            "P": 1
           },
           "nextSceneId": "s22",
           "feedback": "s22",
@@ -1776,7 +1814,8 @@
           "text": "坦白当年与现在的心意",
           "score": {
             "F": 2,
-            "E": 1
+            "E": 1,
+            "N": 1
           },
           "nextSceneId": "end4",
           "feedback": "end4",
@@ -1787,7 +1826,8 @@
           "text": "承认当年心动，但选择放下",
           "score": {
             "T": 2,
-            "F": 1
+            "F": 1,
+            "J": 1
           },
           "nextSceneId": "end3",
           "feedback": "end3",
@@ -1809,7 +1849,7 @@
           "text": "不再回复，就此作罢",
           "score": {
             "I": 2,
-            "J": 1
+            "P": 1
           },
           "nextSceneId": "end3",
           "feedback": "end3",
@@ -1831,7 +1871,8 @@
           "text": "说出你现在的心意",
           "score": {
             "F": 2,
-            "E": 1
+            "E": 1,
+            "J": 1
           },
           "nextSceneId": "end4",
           "feedback": "end4",
@@ -1842,7 +1883,8 @@
           "text": "不戳破，让美好停在此刻",
           "score": {
             "I": 2,
-            "P": 1
+            "F": 1,
+            "N": 1
           },
           "nextSceneId": "end5",
           "feedback": "end5",
@@ -1896,17 +1938,23 @@
     }
   },
   "scoreReview": {
-    "rule": "每个选项后台记录 1-2 分、1-2 个 MBTI 字母倾向；前端不向玩家显示分值。",
+    "rule": "???????? 1-2 ???????? 3 ? MBTI ????????? 2 ? MBTI ??????????????",
     "totals": {
-      "E": 30,
-      "I": 33,
-      "S": 30,
-      "N": 30,
-      "T": 32,
-      "F": 33,
-      "J": 31,
-      "P": 33
-    }
+      "E": 38,
+      "I": 35,
+      "S": 37,
+      "N": 36,
+      "T": 37,
+      "F": 36,
+      "J": 38,
+      "P": 37
+    },
+    "counts": {
+      "choices": 84,
+      "threeLetterChoices": 42,
+      "twoLetterChoices": 42
+    },
+    "note": "????????????? MBTI ?????????????????????"
   },
   "results": {
     "ISTJ": {
