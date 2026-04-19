@@ -19,6 +19,33 @@
   var DPR = 1;
   var app = null;
   var PAIRS = { E: "EI", I: "EI", S: "SN", N: "SN", T: "TF", F: "TF", J: "JP", P: "JP" };
+  var UI = {
+    scrimHeight: 520,
+    scrimTop: "rgba(0,0,0,0)",
+    scrimBottom: "rgba(0,0,0,0.58)",
+    glassTop: "rgba(8,16,18,0.78)",
+    glassBottom: "rgba(14,30,32,0.66)",
+    glassStroke: "rgba(190,255,245,0.16)",
+    titleText: "rgba(232,255,250,0.94)",
+    bodyText: "rgba(226,248,244,0.84)",
+    mutedText: "rgba(226,248,244,0.66)",
+    chipTop: "rgba(255,255,255,0.10)",
+    chipBottom: "rgba(255,255,255,0.06)",
+    chipStroke: "rgba(190,255,245,0.14)",
+    accent: "rgba(84,236,214,0.94)",
+    warm: "rgba(255,152,162,0.92)",
+    primaryTop: "rgba(84,236,214,0.94)",
+    primaryBottom: "rgba(20,156,166,0.94)",
+    primaryStroke: "rgba(255,255,255,0.26)",
+    ghostTop: "rgba(8,16,18,0.62)",
+    ghostBottom: "rgba(14,30,32,0.46)",
+    ghostStroke: "rgba(190,255,245,0.14)",
+    ghostText: "rgba(232,255,250,0.90)",
+    softTop: "rgba(255,255,255,0.12)",
+    softBottom: "rgba(255,255,255,0.07)",
+    softStroke: "rgba(190,255,245,0.14)",
+    softText: "rgba(232,255,250,0.88)"
+  };
   var CHOICE_UI = {
     panelTop: "rgba(10,18,20,0.74)",
     panelBottom: "rgba(16,34,36,0.62)",
@@ -322,6 +349,21 @@
     return g;
   }
 
+  function drawBottomScrim(height, top, bottom) {
+    var h = Math.max(1, height || 420);
+    var y = H - h;
+    var g = ctx.createLinearGradient(0, y, 0, H);
+    g.addColorStop(0, top || UI.scrimTop);
+    g.addColorStop(1, bottom || UI.scrimBottom);
+    ctx.fillStyle = g;
+    ctx.fillRect(0, y, W, h);
+  }
+
+  function drawGlassPanel(x, y, w, h, r, top, bottom, stroke) {
+    fillRoundRect(x, y, w, h, r, verticalGradient(y, h, top, bottom));
+    strokeRoundRect(x, y, w, h, r, stroke, 1);
+  }
+
   function hexToRgb(hex) {
     var value = String(hex || "#6aa3a0").replace("#", "");
     if (value.length === 3) value = value.split("").map(function (ch) { return ch + ch; }).join("");
@@ -585,11 +627,13 @@
   function drawButton(button) {
     var ghost = button.variant === "ghost";
     var soft = button.variant === "soft";
-    var fill = ghost ? "rgba(255,255,255,0.70)" : soft ? "rgba(255,255,255,0.90)" : "#2f8b86";
-    var stroke = ghost || soft ? "rgba(47,139,134,0.20)" : "rgba(255,255,255,0.55)";
-    var text = ghost || soft ? "#315b58" : "#ffffff";
-    fillRoundRect(button.x, button.y, button.w, button.h, 8, fill);
-    strokeRoundRect(button.x, button.y, button.w, button.h, 8, stroke, 1);
+    var fill = ghost ? verticalGradient(button.y, button.h, UI.ghostTop, UI.ghostBottom)
+      : soft ? verticalGradient(button.y, button.h, UI.softTop, UI.softBottom)
+        : verticalGradient(button.y, button.h, UI.primaryTop, UI.primaryBottom);
+    var stroke = ghost ? UI.ghostStroke : soft ? UI.softStroke : UI.primaryStroke;
+    var text = ghost ? UI.ghostText : soft ? UI.softText : "rgba(10,18,20,0.86)";
+    fillRoundRect(button.x, button.y, button.w, button.h, 10, fill);
+    strokeRoundRect(button.x, button.y, button.w, button.h, 10, stroke, 1);
     ctx.font = button.h > 52 ? "600 16px sans-serif" : "600 14px sans-serif";
     ctx.fillStyle = text;
     ctx.textAlign = "center";
@@ -621,7 +665,7 @@
 
   function prologuePages() {
     var text = (DATA.introProloguePages || []).join("\n\n");
-    return paginateText(text, 286, "13px sans-serif", 18);
+    return paginateText(text, 286, "13px sans-serif", 10);
   }
 
   function advancePrologue() {
@@ -639,27 +683,29 @@
     var pageIndex = Math.min(app.textPage, pages.length - 1);
     var isLast = pageIndex >= pages.length - 1;
     drawBackgroundImage("firstCover", "#6f9d91");
-    ctx.fillStyle = "rgba(255,255,255,0.36)";
-    ctx.fillRect(0, 0, W, H);
-    fillRoundRect(28, 96, 334, 590, 8, "rgba(255,255,255,0.92)");
-    strokeRoundRect(28, 96, 334, 590, 8, "rgba(47,139,134,0.18)", 1);
-    ctx.font = "700 25px sans-serif";
-    ctx.fillStyle = "#245b56";
-    ctx.textAlign = "center";
+    drawBottomScrim(UI.scrimHeight);
+    var panelH = 276;
+    var panelBottom = 706;
+    var panelY = panelBottom - panelH;
+    drawGlassPanel(20, panelY, 350, panelH, 12, UI.glassTop, UI.glassBottom, UI.glassStroke);
+    ctx.font = "700 20px sans-serif";
+    ctx.fillStyle = UI.titleText;
+    ctx.textAlign = "left";
     ctx.textBaseline = "top";
-    ctx.fillText("\u4fe1\u30fb\u672a\u5bc4\u30fb\u8c37\u96e8\u524d\u591c", W / 2, 136);
-    drawLines(pages[pageIndex], 52, 196, 20, "13px sans-serif", "#385a56");
+    ctx.fillText("\u4fe1\u30fb\u672a\u5bc4\u30fb\u8c37\u96e8\u524d\u591c", 40, panelY + 18);
+    drawLines(pages[pageIndex], 40, panelY + 58, 20, "13px sans-serif", UI.bodyText);
     ctx.font = "600 12px sans-serif";
-    ctx.fillStyle = "#6a7b78";
+    ctx.fillStyle = UI.mutedText;
+    ctx.textAlign = "right";
     ctx.textBaseline = "middle";
-    ctx.fillText((pageIndex + 1) + " / " + pages.length, W / 2, 656);
+    ctx.fillText((pageIndex + 1) + " / " + pages.length, 356, panelY + panelH - 18);
     addButton("prologue-next", 92, 716, 206, 52, isLast ? "\u8fdb\u5165\u8c37\u96e8\u6e05\u6668" : "\u7ee7\u7eed\u9605\u8bfb", "primary", advancePrologue);
     drawAudioButton();
   }
 
   function advanceSceneIntro() {
     var scene = currentScene();
-    var pages = paginateText(scene.intro, 286, "13px sans-serif", 20);
+    var pages = paginateText(scene.intro, 286, "13px sans-serif", 11);
     if (app.textPage < pages.length - 1) {
       app.textPage += 1;
       audio.click();
@@ -685,7 +731,7 @@
 
   function drawSceneIntro() {
     var scene = currentScene();
-    var pages = paginateText(scene.intro, 286, "13px sans-serif", 20);
+    var pages = paginateText(scene.intro, 286, "13px sans-serif", 11);
     var pageIndex = Math.min(app.textPage, pages.length - 1);
     var isLast = pageIndex >= pages.length - 1;
     var label = isLast ? "\u7ee7\u7eed" : "\u7ee7\u7eed\u9605\u8bfb";
@@ -694,25 +740,29 @@
     if (isLast && scene.interactionMode === "ending") label = "\u67e5\u770b\u4eba\u683c\u7ed3\u679c";
     drawSceneBackground(scene);
     drawSceneCatAnimation(scene);
-    ctx.fillStyle = "rgba(255,255,255,0.30)";
-    ctx.fillRect(0, 0, W, H);
-    fillRoundRect(28, 112, 334, 552, 8, "rgba(255,255,255,0.90)");
-    strokeRoundRect(28, 112, 334, 552, 8, "rgba(47,139,134,0.18)", 1);
-    ctx.font = "700 27px sans-serif";
-    ctx.fillStyle = "#245b56";
-    ctx.textAlign = "center";
+    drawBottomScrim(UI.scrimHeight);
+    var panelH = 300;
+    var panelBottom = 718;
+    var panelY = panelBottom - panelH;
+    drawGlassPanel(20, panelY, 350, panelH, 12, UI.glassTop, UI.glassBottom, UI.glassStroke);
+    ctx.font = "700 18px sans-serif";
+    ctx.fillStyle = UI.titleText;
+    ctx.textAlign = "left";
     ctx.textBaseline = "top";
-    ctx.fillText(scene.name, W / 2, 148);
-    fillRoundRect(72, 198, 246, 30, 8, "rgba(47,139,134,0.12)");
+    ctx.fillText(scene.name, 40, panelY + 18);
+    drawGlassPanel(268, panelY + 16, 92, 26, 10, UI.chipTop, UI.chipBottom, UI.chipStroke);
     ctx.font = "600 12px sans-serif";
-    ctx.fillStyle = "#2f615d";
+    ctx.fillStyle = UI.softText;
+    ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(scene.time, W / 2, 213);
-    drawLines(pages[pageIndex], 52, 256, 19, "13px sans-serif", "#385a56");
+    ctx.fillText(scene.time, 314, panelY + 29);
+    drawLines(pages[pageIndex], 40, panelY + 56, 19, "13px sans-serif", UI.bodyText);
     ctx.font = "600 12px sans-serif";
-    ctx.fillStyle = "#6a7b78";
-    ctx.fillText((pageIndex + 1) + " / " + pages.length, W / 2, 638);
-    addButton("scene-next", 92, 690, 206, 52, label, "primary", advanceSceneIntro);
+    ctx.fillStyle = UI.mutedText;
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    ctx.fillText((pageIndex + 1) + " / " + pages.length, 356, panelY + panelH - 18);
+    addButton("scene-next", 92, 730, 206, 52, label, "primary", advanceSceneIntro);
     if (scene.id === "s01") drawAudioButton();
   }
 
@@ -720,8 +770,8 @@
     var scene = currentScene();
     drawSceneBackground(scene);
     drawSceneCatAnimation(scene);
-    fillRoundRect(74, 762, 242, 52, 8, "rgba(255,255,255,0.88)");
-    strokeRoundRect(74, 762, 242, 52, 8, "rgba(47,139,134,0.20)", 1);
+    drawBottomScrim(220);
+    drawGlassPanel(74, 762, 242, 52, 12, UI.chipTop, UI.chipBottom, UI.chipStroke);
     addButton("scene-preview-next", 92, 770, 206, 40, "\u7ee7\u7eed", "primary", function () {
       app.textPage = 0;
       app.screen = "sceneIntro";
@@ -797,13 +847,14 @@
     var event = eventForScene(scene.id);
     drawSceneBackground(scene);
     if (event && event.hotspot) drawHotspot(event);
-    fillRoundRect(28, 612, 334, 116, 8, "rgba(255,255,255,0.88)");
+    drawBottomScrim(360);
+    drawGlassPanel(28, 612, 334, 116, 12, UI.glassTop, UI.glassBottom, UI.glassStroke);
     ctx.font = "700 18px sans-serif";
-    ctx.fillStyle = "#245b56";
+    ctx.fillStyle = UI.titleText;
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
     ctx.fillText(scene.name, 48, 634);
-    drawLines(wrapLines("\u70b9\u4eae\u7684\u7269\u4ef6\u4f1a\u5e26\u4f60\u628a\u8fd9\u4e00\u6bb5\u6545\u4e8b\u7ee7\u7eed\u5f80\u4e0b\u8d70\u3002", 292, "15px sans-serif"), 48, 670, 22, "15px sans-serif", "#496966");
+    drawLines(wrapLines("\u70b9\u4eae\u7684\u7269\u4ef6\u4f1a\u5e26\u4f60\u628a\u8fd9\u4e00\u6bb5\u6545\u4e8b\u7ee7\u7eed\u5f80\u4e0b\u8d70\u3002", 292, "15px sans-serif"), 48, 670, 22, "15px sans-serif", UI.bodyText);
     if (scene.id === "s01") drawAudioButton();
   }
 

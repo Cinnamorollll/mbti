@@ -13,7 +13,7 @@
 
   var TRACKS = {
     rain: { src: "./audio/rain.wav", volume: 0.28, loop: true },
-    seven: { src: "./audio/7lx.wav", volume: 0.30, loop: true },
+    seven: { src: "./audio/7lx.wav", volume: 0.22, loop: true },
     music: { src: "./audio/music.wav", volume: 0.38, loop: true },
     miao: { src: "./audio/miao.wav", volume: 0.34, loop: false }
   };
